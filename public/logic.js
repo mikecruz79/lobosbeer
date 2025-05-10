@@ -164,6 +164,7 @@ function adicionarAoCarrinho(produto) {
 }
 
 // Adiciona um listener ao botão "Começar Pedido" para exibir o formulário do cliente
+// Este botão agora é o ponto de entrada para o fluxo do pedido e exibe o formulário.
 if (startOrderBtn) {
   startOrderBtn.addEventListener('click', exibirFormulario);
 } else {
@@ -181,6 +182,11 @@ function exibirFormulario() {
     console.error("Elemento #formContainer não encontrado.");
     return;
   }
+
+  // Oculta o catálogo (se estiver visível) e o botão "Começar Pedido"
+  if (catalogoContainer) catalogoContainer.style.display = 'none';
+  if (startOrderBtn) startOrderBtn.style.display = 'none';
+
 
   // Preenche o container do formulário com o HTML do formulário
   formContainer.innerHTML = `
@@ -297,7 +303,7 @@ function exibirFormulario() {
 
 
   // Listeners para validação visual (oninput/onchange)
-  nameInput.addEventListener('input', () => validateField(nameInput, nameError, nameInput.value.trim() !== '', 'Nome é obrigatório.'));
+  nameInput.addEventListener('input', () => validateFullName(nameInput, nameError)); // Usar nova validação para nome completo
   whatsappInput.addEventListener('input', () => validateWhatsapp(whatsappInput, whatsappError));
   emailInput.addEventListener('input', () => validateEmail(emailInput, emailError)); // E-mail agora é obrigatório
   deliveryTypeSelect.addEventListener('change', () => validateField(deliveryTypeSelect, deliveryTypeError, deliveryTypeSelect.value !== '', 'Selecione o tipo de entrega.'));
@@ -318,7 +324,7 @@ function exibirFormulario() {
   if (continueBtn) {
     continueBtn.addEventListener('click', () => {
       // Executa todas as validações antes de continuar
-      const isNameValid = validateField(nameInput, nameError, nameInput.value.trim() !== '', 'Nome é obrigatório.');
+      const isNameValid = validateFullName(nameInput, nameError); // Usar nova validação
       const isWhatsappValid = validateWhatsapp(whatsappInput, whatsappError);
       const isEmailValid = validateEmail(emailInput, emailError); // E-mail agora é obrigatório
       const isDeliveryTypeValid = validateField(deliveryTypeSelect, deliveryTypeError, deliveryTypeSelect.value !== '', 'Selecione o tipo de entrega.');
@@ -398,6 +404,22 @@ function validateField(inputElement, errorElement, isValid, errorMessage) {
 }
 
 /**
+ * Valida o campo de Nome completo (requer pelo menos nome e sobrenome).
+ * @param {HTMLElement} inputElement - O elemento input do Nome completo.
+ * @param {HTMLElement} errorElement - O elemento onde a mensagem de erro será exibida.
+ * @returns {boolean} - O resultado da validação.
+ */
+function validateFullName(inputElement, errorElement) {
+    const fullName = inputElement.value.trim();
+    const parts = fullName.split(' ');
+    // Valida se tem pelo menos duas partes (nome e sobrenome) e se nenhuma parte está vazia após split
+    const isValid = parts.length >= 2 && parts.every(part => part.length > 0);
+    const errorMessage = 'Por favor, digite seu nome completo (nome e sobrenome).';
+    return validateField(inputElement, errorElement, isValid, errorMessage);
+}
+
+
+/**
  * Valida o campo de WhatsApp (apenas números, 11-13 dígitos).
  * @param {HTMLElement} inputElement - O elemento input do WhatsApp.
  * @param {HTMLElement} errorElement - O elemento onde a mensagem de erro será exibida.
@@ -461,6 +483,10 @@ function ativarCarrinho() {
     console.error("Elemento #cartContainer não encontrado.");
     return;
   }
+
+  // Oculta o formulário de dados do cliente
+  if (formContainer) formContainer.style.display = 'none';
+
 
   // Calcula o total do carrinho
   const total = itensCarrinho.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
