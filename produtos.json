@@ -1,0 +1,16 @@
+[
+  {
+    "id": "produto_001",
+    "nome": "Skol 350ml",
+    "preco": 4.5,
+    "imagem_url": "https://i.imgur.com/OUpubAj.png",
+    "ativo": true
+  },
+  {
+    "id": "produto_002",
+    "nome": "Coca-Cola Lata 350ml",
+    "preco": 5,
+    "imagem_url": "https://i.imgur.com/4BR9olh.jpeg",
+    "ativo": true
+  }
+]
