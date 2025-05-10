@@ -1,3 +1,14 @@
+// scripts/config.js
+
+// Configurações globais para o app de Delivery
+
+// Número de WhatsApp (apenas dígitos, incluindo código do país e DDD)
+const WHATSAPP_NUMBER = "5551993470686"; // Seu número de WhatsApp
+
+// URL da planilha pública no formato CSV (Comma Separated Values)
+// Usaremos fetch para obter o conteúdo deste link e analisar o CSV
+const CATALOGO_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vStR9VM8h2X4j87lsHmBzH-NjrS-k6LMKhEuxfmcLVWt_D-A9Yplbc_309TB_WkWa-oRbpvXYob-Avj/pub?output=csv";
+
 // scripts/logic.js
 
 // Lógica de interação para o Delivery do Daniel
@@ -16,10 +27,10 @@ const cartContainer = document.getElementById("cartContainer");
 window.addEventListener('DOMContentLoaded', carregarCatalogo);
 
 /**
- * Carrega produtos do catálogo usando Tabletop.js da URL configurada e renderiza na tela.
- * Extrai o ID da planilha da CATALOGO_URL.
+ * Carrega produtos do catálogo buscando o arquivo CSV da URL configurada,
+ * analisa o CSV e renderiza os produtos na tela.
  */
-function carregarCatalogo() {
+async function carregarCatalogo() {
   // Verifica se o container do catálogo existe antes de continuar
   if (!catalogoContainer) {
     console.error("Elemento #catalogo não encontrado.");
@@ -29,46 +40,68 @@ function carregarCatalogo() {
   // Exibe uma mensagem de carregamento enquanto os dados são buscados
   catalogoContainer.innerHTML = '<p>Carregando produtos...</p>';
 
-  // Extrai o ID da planilha da URL. O ID está entre '/d/e/' e '/pubhtml' ou '/edit'
-  const sheetIdMatch = CATALOGO_URL.match(/\/d\/e\/([a-zA-Z0-9_-]+)/);
-  let sheetId = null;
+  try {
+    // Realiza a requisição para obter o conteúdo do arquivo CSV
+    const res = await fetch(CATALOGO_URL);
 
-  if (sheetIdMatch && sheetIdMatch[1]) {
-    sheetId = sheetIdMatch[1];
-  } else {
-     // Tenta extrair de um formato de URL diferente, se necessário
-     const directSheetIdMatch = CATALOGO_URL.match(/\/d\/([a-zA-Z0-9_-]+)/);
-     if (directSheetIdMatch && directSheetIdMatch[1]) {
-         sheetId = directSheetIdMatch[1];
-     }
+    // Verifica se a resposta da requisição foi bem-sucedida (status 2xx)
+    if (!res.ok) {
+      throw new Error(`Erro ao buscar catálogo CSV: Status ${res.status}`);
+    }
+
+    // Obtém o texto da resposta (o conteúdo CSV)
+    const csvText = await res.text();
+
+    // Analisa o texto CSV em um array de objetos
+    const produtos = parseCSV(csvText);
+
+    // Chama a função para exibir os produtos carregados
+    showInfo(produtos);
+
+  } catch (error) {
+    // Em caso de erro na requisição ou análise do CSV, exibe uma mensagem de erro
+    catalogoContainer.innerHTML = `<p>Erro ao carregar catálogo: ${error.message}</p>`;
+    console.error("Detalhes do erro ao carregar catálogo:", error);
   }
-
-
-  if (!sheetId) {
-      catalogoContainer.innerHTML = '<p>Erro ao carregar catálogo: Não foi possível extrair o ID da planilha da URL configurada.</p>';
-      console.error("Não foi possível extrair o ID da planilha da URL:", CATALOGO_URL);
-      return;
-  }
-
-
-  // Usa Tabletop.js para carregar os dados da planilha usando o ID
-  Tabletop.init({
-    key: sheetId, // Usa o ID da planilha como chave
-    callback: showInfo, // Função a ser chamada quando os dados forem carregados
-    simpleSheet: true // Tenta carregar a primeira aba como um array de objetos simples
-  });
 }
 
 /**
- * Função de callback para Tabletop.js, processa os dados carregados e renderiza o catálogo.
- * @param {Array<Object>} data - Os dados carregados da planilha.
- * @param {Object} tabletop - O objeto Tabletop.js.
+ * Analisa o texto CSV em um array de objetos JavaScript.
+ * Assume que a primeira linha do CSV são os cabeçalhos.
+ * @param {string} csvText - O conteúdo do arquivo CSV como texto.
+ * @returns {Array<Object>} - Um array de objetos representando as linhas do CSV.
  */
-function showInfo(data, tabletop) {
+function parseCSV(csvText) {
+  const lines = csvText.split('\n');
+  const headers = lines[0].split(','); // Assume vírgula como delimitador
+  const data = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(','); // Assume vírgula como delimitador
+    if (values.length === headers.length) { // Garante que a linha tem o número correto de colunas
+      const item = {};
+      for (let j = 0; j < headers.length; j++) {
+        // Remove espaços em branco extras dos cabeçalhos e valores
+        const header = headers[j].trim();
+        const value = values[j].trim();
+        item[header] = value;
+      }
+      data.push(item);
+    }
+  }
+  return data;
+}
+
+
+/**
+ * Processa os dados carregados (agora de um CSV analisado) e renderiza o catálogo.
+ * @param {Array<Object>} data - Os dados carregados da planilha (array de objetos).
+ */
+function showInfo(data) {
   // Verifica se os dados foram carregados corretamente e se é um array
-  if (!data || !Array.isArray(data)) {
-    catalogoContainer.innerHTML = '<p>Erro ao carregar catálogo: Formato de dados inesperado ou planilha vazia.</p>';
-    console.error("Dados recebidos do Tabletop.js não são um array ou estão vazios:", data);
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    catalogoContainer.innerHTML = '<p>Nenhum produto encontrado no catálogo ou formato de dados inesperado.</p>';
+    console.error("Dados recebidos não são um array, estão vazios ou formato inesperado:", data);
     return;
   }
 
@@ -77,7 +110,7 @@ function showInfo(data, tabletop) {
 
   // Itera sobre os produtos recebidos, filtra pelos ativos e cria um card para cada um
   // Certifique-se de que os nomes das colunas na planilha (nome, preco, imagem_url, ativo)
-  // correspondem às chaves nos objetos 'p'. Tabletop.js usa os cabeçalhos da primeira linha como chaves.
+  // correspondem às chaves nos objetos 'p'. A função parseCSV usa os cabeçalhos da primeira linha como chaves.
   const produtosAtivos = data.filter(p => p.ativo && p.ativo.toLowerCase() === 'true');
 
   if (produtosAtivos.length === 0) {
@@ -89,20 +122,21 @@ function showInfo(data, tabletop) {
   produtosAtivos.forEach(p => {
     const card = document.createElement('div');
     card.className = 'produto-item'; // Classe para estilização
+    // Adicionado um fallback para a imagem caso a URL esteja vazia ou inválida
+    const imageUrl = p.imagem_url && p.imagem_url.trim() !== '' ? p.imagem_url : 'https://placehold.co/150x100/EFEFEF/AAAAAA?text=Sem+Imagem';
+
     card.innerHTML = `
-      <img src="${p.imagem_url}" alt="${p.nome}" class="produto-imagem" />
-      <h3>${p.nome}</h3>
-      <p>R$ ${parseFloat(p.preco).toFixed(2)}</p>
-      <button class="add-to-cart-btn" data-product-id="${p.id}">Adicionar ao carrinho</button>
-    `;
+      <img src="${imageUrl}" alt="${p.nome || 'Produto sem nome'}" class="produto-imagem" onerror="this.onerror=null; this.src='https://placehold.co/150x100/EFEFEF/AAAAAA?text=Erro+Imagem';" />
+      <h3>${p.nome || 'Produto sem nome'}</h3>
+      <p>R$ ${parseFloat(p.preco || 0).toFixed(2)}</p> <button class="add-to-cart-btn" data-product-id="${p.id || p.nome}">Adicionar ao carrinho</button> `;
     // Adiciona um listener ao botão "Adicionar ao carrinho" para chamar a função adicionarAoCarrinho
     // Passa o objeto produto com preco convertido para número
     card.querySelector('.add-to-cart-btn').addEventListener('click', () => adicionarAoCarrinho({
-        id: p.id, // Certifique-se que sua planilha tem uma coluna 'id'
-        nome: p.nome,
-        preco: parseFloat(p.preco),
-        imagem_url: p.imagem_url,
-        ativo: p.ativo
+        id: p.id || p.nome, // Usando nome como fallback para ID
+        nome: p.nome || 'Produto sem nome',
+        preco: parseFloat(p.preco || 0), // Converte preço para número, com fallback para 0
+        imagem_url: imageUrl,
+        ativo: p.ativo || 'false' // Fallback para ativo
     }));
     // Adiciona o card do produto ao container do catálogo
     catalogoContainer.appendChild(card);
@@ -117,7 +151,7 @@ function showInfo(data, tabletop) {
  * @param {object} produto - O objeto produto a ser adicionado.
  */
 function adicionarAoCarrinho(produto) {
-  // Procura se o produto já existe no carrinho
+  // Procura se o produto já existe no carrinho pelo ID ou nome (se ID não existir)
   const existente = itensCarrinho.find(item => item.id === produto.id);
 
   if (existente) {
