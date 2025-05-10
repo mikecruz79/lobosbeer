@@ -1,0 +1,338 @@
+/* style.css */
+
+/* Estilos gerais para o corpo da página */
+body {
+  font-family: sans-serif; /* Fonte limpa e legível */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column; /* Organiza os elementos em coluna */
+  align-items: center; /* Centraliza os elementos horizontalmente */
+  justify-content: flex-start; /* Alinha os elementos ao topo */
+  min-height: 100vh; /* Garante que o corpo ocupe pelo menos a altura total da viewport */
+  background-color: #f8f8f8; /* Cor de fundo clara */
+  color: #333; /* Cor do texto padrão */
+}
+
+.site-header {
+    width: 100%;
+    height: 250px; /* Altura fixa para o cabeçalho */
+    position: relative;
+    overflow: hidden; /* Garante que a imagem de capa não transborde */
+    margin-bottom: 20px;
+}
+
+.capa-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cobre a área do cabeçalho */
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.header-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Overlay escuro para destacar o texto */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 2;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.logo-img {
+    width: 80px; /* Tamanho da logo */
+    height: 80px;
+    border-radius: 50%; /* Logo redonda */
+    border: 3px solid white;
+    margin-bottom: 10px;
+    object-fit: cover;
+}
+
+.header-overlay h1 {
+    margin: 5px 0;
+    color: white; /* Cor do título no overlay */
+    font-size: 2em;
+}
+
+.header-overlay p {
+    margin: 2px 0;
+    font-size: 1em;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px; /* Largura máxima para o conteúdo principal */
+    padding: 0 1rem; /* Espaçamento lateral */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+/* Estilo para o botão central "Começar Pedido" */
+#startOrderBtn {
+  padding: 0.75rem 1.5rem; /* Espaçamento interno */
+  font-size: 1rem; /* Tamanho da fonte */
+  cursor: pointer; /* Muda o cursor para indicar clicável */
+  margin-bottom: 2rem; /* Espaçamento abaixo do botão */
+  background-color: #28a745; /* Cor de fundo verde */
+  color: white; /* Cor do texto branca */
+  border: none; /* Remove a borda padrão */
+  border-radius: 5px; /* Cantos arredondados */
+  transition: background-color 0.3s ease; /* Transição suave na cor de fundo */
+}
+
+#startOrderBtn:hover {
+  background-color: #218838; /* Cor de fundo mais escura ao passar o mouse */
+}
+
+/* Estilo para os containers vazios que serão preenchidos dinamicamente */
+#formContainer,
+#catalogo,
+#cartContainer {
+  width: 100%; /* Ocupa a largura total disponível */
+  max-width: 600px; /* Limita a largura máxima */
+  margin-bottom: 1.5rem; /* Espaçamento abaixo de cada container */
+  padding: 1.5rem; /* Espaçamento interno */
+  background-color: #fff; /* Fundo branco */
+  border-radius: 8px; /* Cantos arredondados */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+/* Estilo para os títulos dentro dos containers */
+#formContainer h2,
+#catalogo h2,
+#cartContainer h2 {
+    text-align: center; /* Centraliza os títulos */
+    color: #0056b3; /* Cor azul para o títulos */
+    margin-top: 0; /* Remove margem superior padrão */
+    margin-bottom: 1.5rem; /* Espaçamento abaixo dos títulos */
+}
+
+/* Estilo para o formulário */
+#orderForm label {
+    display: block; /* Cada label em uma nova linha */
+    margin-bottom: 0.5rem; /* Espaçamento abaixo do label */
+    font-weight: bold; /* Texto do label em negrito */
+}
+
+#orderForm input[type="text"],
+#orderForm input[type="email"],
+#orderForm input[type="number"], /* Adicionado para o campo de troco */
+#orderForm select {
+    width: calc(100% - 20px); /* Ocupa quase a largura total do container, descontando padding */
+    padding: 10px; /* Espaçamento interno */
+    margin-bottom: 0.5rem; /* Espaçamento abaixo do input/select */
+    border: 1px solid #ccc; /* Borda cinza */
+    border-radius: 4px; /* Cantos arredondados */
+    box-sizing: border-box; /* Inclui padding e borda no cálculo da largura */
+}
+
+/* Estilo para inputs com erro */
+#orderForm input.input-error,
+#orderForm select.input-error { /* Adicionado select com erro */
+    border-color: red;
+}
+
+.error-message-field {
+    color: red;
+    font-size: 0.8em;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    display: none; /* Esconde por padrão */
+}
+
+
+#orderForm button {
+    display: block; /* Botão em uma nova linha */
+    width: 100%; /* Ocupa a largura total */
+    padding: 0.75rem; /* Espaçamento interno */
+    font-size: 1rem; /* Tamanho da fonte */
+    cursor: pointer; /* Muda o cursor */
+    background-color: #007bff; /* Cor de fundo azul */
+    color: white; /* Cor do texto branca */
+    border: none; /* Remove a borda */
+    border-radius: 5px; /* Cantos arredondados */
+    transition: background-color 0.3s ease; /* Transição suave */
+    margin-top: 1rem;
+}
+
+#orderForm button:hover {
+    background-color: #0056b3; /* Cor de fundo mais escura ao passar o mouse */
+}
+
+
+/* Estilo para cada item de produto no catálogo */
+.produto-item {
+  border: 1px solid #eee; /* Borda leve */
+  padding: 1rem; /* Espaçamento interno */
+  margin-bottom: 1rem; /* Espaçamento entre itens */
+  border-radius: 5px; /* Cantos arredondados */
+  text-align: center; /* Centraliza o conteúdo */
+  background-color: #f9f9f9; /* Fundo levemente cinza */
+}
+
+.produto-item img {
+  max-width: 100%; /* Garante que a imagem não ultrapasse a largura do container */
+  height: auto; /* Mantém a proporção da imagem */
+  border-radius: 4px; /* Cantos arredondados na imagem */
+  margin-bottom: 0.5rem; /* Espaçamento abaixo da imagem */
+}
+
+.produto-item h3 {
+  margin-top: 0; /* Remove margem superior padrão */
+  margin-bottom: 0.5rem; /* Espaçamento abaixo do título do produto */
+  color: #333; /* Cor do título do produto */
+}
+
+.produto-item p {
+  margin-top: 0; /* Remove margem superior padrão */
+  margin-bottom: 1rem; /* Espaçamento abaixo do preço */
+  font-weight: bold; /* Preço em negrito */
+  color: #28a745; /* Cor verde para o preço */
+}
+
+.produto-item button {
+  padding: 0.5rem 1rem; /* Espaçamento interno */
+  font-size: 0.9rem; /* Tamanho da fonte */
+  cursor: pointer; /* Muda o cursor */
+  background-color: #ffc107; /* Cor de fundo amarela */
+  color: #333; /* Cor do texto escura */
+  border: none; /* Remove a borda */
+  border-radius: 4px; /* Cantos arredondados */
+  transition: background-color 0.3s ease; /* Transição suave */
+}
+
+.produto-item button:hover {
+  background-color: #e0a800; /* Cor de fundo mais escura ao passar o mouse */
+}
+
+/* Estilo para a lista de itens no carrinho */
+#cartContainer ul {
+  list-style: none; /* Remove marcadores da lista */
+  padding: 0; /* Remove padding padrão */
+  margin-bottom: 1rem; /* Espaçamento abaixo da lista */
+}
+
+#cartContainer li {
+  margin-bottom: 0.5rem; /* Espaçamento entre itens da lista */
+  padding-bottom: 0.5rem; /* Espaçamento interno inferior */
+  border-bottom: 1px dashed #eee; /* Linha tracejada entre itens */
+}
+
+#cartContainer li:last-child {
+    border-bottom: none; /* Remove a borda do último item */
+}
+
+/* Estilo para o total no carrinho */
+#cartContainer p {
+  font-size: 1.1rem; /* Tamanho da fonte maior */
+  font-weight: bold; /* Negrito */
+  margin-top: 1.5rem; /* Espaçamento acima do total */
+  color: #0056b3; /* Cor azul */
+}
+
+/* Estilo para o aviso final no carrinho */
+#avisoFinal {
+  margin-top: 1.5rem; /* Espaçamento acima do aviso */
+  padding: 1rem; /* Espaçamento interno */
+  background-color: #fff3cd; /* Fundo amarelo claro */
+  border: 1px solid #ffecb5; /* Borda amarela */
+  border-radius: 4px; /* Cantos arredondados */
+  color: #856404; /* Cor do texto escura */
+  font-size: 0.9rem; /* Tamanho da fonte menor */
+}
+
+/* Estilo para o botão "Finalizar Pedido" no carrinho */
+#btnFinalizarPedido {
+  display: block; /* Botão em uma nova linha */
+  width: 100%; /* Ocupa a largura total */
+  padding: 0.75rem; /* Espaçamento interno */
+  font-size: 1rem; /* Tamanho da fonte */
+  cursor: pointer; /* Muda o cursor */
+  margin-top: 1.5rem; /* Espaçamento acima do botão */
+  background-color: #28a745; /* Cor de fundo verde */
+  color: white; /* Cor do texto branca */
+  border: none; /* Remove a borda */
+  border-radius: 5px; /* Cantos arredondados */
+  transition: background-color 0.3s ease; /* Transição suave */
+}
+
+#btnFinalizarPedido:hover {
+  background-color: #218838; /* Cor de fundo mais escura ao passar o mouse */
+}
+
+
+/* Layout responsivo: mobile first */
+@media (min-width: 600px) {
+  body {
+    padding: 0; /* Remove padding do body em telas maiores */
+  }
+
+  .container {
+      padding: 0 2rem; /* Adiciona padding ao container principal */
+  }
+
+
+  .header-overlay h1 {
+      font-size: 3em; /* Aumenta o tamanho do título */
+  }
+
+  .logo-img {
+      width: 100px; /* Aumenta o tamanho da logo */
+      height: 100px;
+  }
+
+
+  #startOrderBtn {
+    font-size: 1.125rem; /* Aumenta o tamanho da fonte do botão */
+  }
+
+  #formContainer,
+  #catalogo,
+  #cartContainer {
+      padding: 2rem; /* Aumenta o padding interno dos containers */
+  }
+
+  .produto-item {
+      display: flex; /* Usa flexbox para alinhar itens na mesma linha */
+      align-items: center; /* Alinha verticalmente ao centro */
+      text-align: left; /* Alinha o texto à esquerda */
+  }
+
+  .produto-item img {
+      width: 80px; /* Largura fixa para a imagem */
+      height: 80px; /* Altura fixa para a imagem */
+      object-fit: cover; /* Cobre a área mantendo proporção */
+      margin-right: 1rem; /* Espaçamento à direita da imagem */
+      margin-bottom: 0; /* Remove margem inferior */
+  }
+
+  .produto-item h3 {
+      flex-grow: 1; /* Permite que o título ocupe o espaço restante */
+      margin-bottom: 0; /* Remove margem inferior */
+  }
+
+  .produto-item p {
+      margin-left: 1rem; /* Espaçamento à esquerda do preço */
+      margin-bottom: 0; /* Remove margem inferior */
+      min-width: 80px; /* Largura mínima para o preço */
+      text-align: right; /* Alinha o preço à direita */
+  }
+
+  .produto-item button {
+      margin-left: 1rem; /* Espaçamento à esquerda do botão */
+  }
+}
