@@ -267,3 +267,4 @@ Entrega: ${dadosCliente.tipoEntrega}.
 // Chamada inicial para carregar o catálogo quando a página é carregada (já feito pelo DOMContentLoaded listener)
 // carregarCatalogo();
 
+
