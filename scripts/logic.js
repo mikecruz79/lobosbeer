@@ -62,7 +62,8 @@ function showInfo(data, tabletop) {
     card.innerHTML = `
       <img src="${p.imagem_url}" alt="${p.nome}" class="produto-imagem" />
       <h3>${p.nome}</h3>
-      <p>R$ ${parseFloat(p.preco).toFixed(2)}</p> <button class="add-to-cart-btn" data-product-id="${p.id}">Adicionar ao carrinho</button>
+      <p>R$ ${parseFloat(p.preco).toFixed(2)}</p>
+      <button class="add-to-cart-btn" data-product-id="${p.id}">Adicionar ao carrinho</button>
     `;
     // Adiciona um listener ao botão "Adicionar ao carrinho" para chamar a função adicionarAoCarrinho
     // Passa o objeto produto com preco convertido para número
