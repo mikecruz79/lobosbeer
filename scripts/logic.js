@@ -73,11 +73,19 @@ async function carregarCatalogo() {
  */
 function parseCSV(csvText) {
   const lines = csvText.split('\n');
-  const headers = lines[0].split(','); // Assume vírgula como delimitador
+  // Filtra linhas vazias que podem ocorrer no final do arquivo CSV
+  const validLines = lines.filter(line => line.trim() !== '');
+
+  if (validLines.length === 0) {
+      console.warn("CSV vazio ou apenas com cabeçalho.");
+      return []; // Retorna array vazio se não houver dados
+  }
+
+  const headers = validLines[0].split(','); // Assume vírgula como delimitador
   const data = [];
 
-  for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(','); // Assume vírgula como delimitador
+  for (let i = 1; i < validLines.length; i++) {
+    const values = validLines[i].split(','); // Assume vírgula como delimitador
     if (values.length === headers.length) { // Garante que a linha tem o número correto de colunas
       const item = {};
       for (let j = 0; j < headers.length; j++) {
@@ -87,6 +95,8 @@ function parseCSV(csvText) {
         item[header] = value;
       }
       data.push(item);
+    } else {
+        console.warn(`Linha CSV ignorada devido a número incorreto de colunas: ${validLines[i]}`);
     }
   }
   return data;
@@ -128,7 +138,9 @@ function showInfo(data) {
     card.innerHTML = `
       <img src="${imageUrl}" alt="${p.nome || 'Produto sem nome'}" class="produto-imagem" onerror="this.onerror=null; this.src='https://placehold.co/150x100/EFEFEF/AAAAAA?text=Erro+Imagem';" />
       <h3>${p.nome || 'Produto sem nome'}</h3>
-      <p>R$ ${parseFloat(p.preco || 0).toFixed(2)}</p> <button class="add-to-cart-btn" data-product-id="${p.id || p.nome}">Adicionar ao carrinho</button> `;
+      <p>R$ ${parseFloat(p.preco || 0).toFixed(2)}</p>
+      <button class="add-to-cart-btn" data-product-id="${p.id || p.nome}">Adicionar ao carrinho</button>
+    `;
     // Adiciona um listener ao botão "Adicionar ao carrinho" para chamar a função adicionarAoCarrinho
     // Passa o objeto produto com preco convertido para número
     card.querySelector('.add-to-cart-btn').addEventListener('click', () => adicionarAoCarrinho({
