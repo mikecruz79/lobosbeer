@@ -17,7 +17,7 @@ window.addEventListener('DOMContentLoaded', carregarCatalogo);
 
 /**
  * Carrega produtos do catálogo usando Tabletop.js da URL configurada e renderiza na tela.
- * A URL deve ser de uma planilha Google Sheets publicada para a web.
+ * Extrai o ID da planilha da CATALOGO_URL.
  */
 function carregarCatalogo() {
   // Verifica se o container do catálogo existe antes de continuar
@@ -29,9 +29,31 @@ function carregarCatalogo() {
   // Exibe uma mensagem de carregamento enquanto os dados são buscados
   catalogoContainer.innerHTML = '<p>Carregando produtos...</p>';
 
-  // Usa Tabletop.js para carregar os dados da planilha
+  // Extrai o ID da planilha da URL. O ID está entre '/d/e/' e '/pubhtml' ou '/edit'
+  const sheetIdMatch = CATALOGO_URL.match(/\/d\/e\/([a-zA-Z0-9_-]+)/);
+  let sheetId = null;
+
+  if (sheetIdMatch && sheetIdMatch[1]) {
+    sheetId = sheetIdMatch[1];
+  } else {
+     // Tenta extrair de um formato de URL diferente, se necessário
+     const directSheetIdMatch = CATALOGO_URL.match(/\/d\/([a-zA-Z0-9_-]+)/);
+     if (directSheetIdMatch && directSheetIdMatch[1]) {
+         sheetId = directSheetIdMatch[1];
+     }
+  }
+
+
+  if (!sheetId) {
+      catalogoContainer.innerHTML = '<p>Erro ao carregar catálogo: Não foi possível extrair o ID da planilha da URL configurada.</p>';
+      console.error("Não foi possível extrair o ID da planilha da URL:", CATALOGO_URL);
+      return;
+  }
+
+
+  // Usa Tabletop.js para carregar os dados da planilha usando o ID
   Tabletop.init({
-    key: CATALOGO_URL, // A URL da planilha publicada
+    key: sheetId, // Usa o ID da planilha como chave
     callback: showInfo, // Função a ser chamada quando os dados forem carregados
     simpleSheet: true // Tenta carregar a primeira aba como um array de objetos simples
   });
@@ -45,8 +67,8 @@ function carregarCatalogo() {
 function showInfo(data, tabletop) {
   // Verifica se os dados foram carregados corretamente e se é um array
   if (!data || !Array.isArray(data)) {
-    catalogoContainer.innerHTML = '<p>Erro ao carregar catálogo: Formato de dados inesperado.</p>';
-    console.error("Dados recebidos do Tabletop.js não são um array:", data);
+    catalogoContainer.innerHTML = '<p>Erro ao carregar catálogo: Formato de dados inesperado ou planilha vazia.</p>';
+    console.error("Dados recebidos do Tabletop.js não são um array ou estão vazios:", data);
     return;
   }
 
@@ -56,7 +78,15 @@ function showInfo(data, tabletop) {
   // Itera sobre os produtos recebidos, filtra pelos ativos e cria um card para cada um
   // Certifique-se de que os nomes das colunas na planilha (nome, preco, imagem_url, ativo)
   // correspondem às chaves nos objetos 'p'. Tabletop.js usa os cabeçalhos da primeira linha como chaves.
-  data.filter(p => p.ativo && p.ativo.toLowerCase() === 'true').forEach(p => { // Filtra por 'ativo' sendo a string 'true'
+  const produtosAtivos = data.filter(p => p.ativo && p.ativo.toLowerCase() === 'true');
+
+  if (produtosAtivos.length === 0) {
+       catalogoContainer.innerHTML += '<p>Nenhum produto ativo encontrado no catálogo.</p>';
+       return; // Sai da função se não houver produtos ativos
+  }
+
+
+  produtosAtivos.forEach(p => {
     const card = document.createElement('div');
     card.className = 'produto-item'; // Classe para estilização
     card.innerHTML = `
@@ -78,10 +108,6 @@ function showInfo(data, tabletop) {
     catalogoContainer.appendChild(card);
   });
 
-  // Se não houver produtos ativos após carregar
-   if (catalogoContainer.children.length <= 1) { // Verifica se só tem o título
-       catalogoContainer.innerHTML += '<p>Nenhum produto ativo encontrado no catálogo.</p>';
-   }
 }
 
 
