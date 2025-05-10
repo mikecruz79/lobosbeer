@@ -16,10 +16,10 @@ const cartContainer = document.getElementById("cartContainer");
 window.addEventListener('DOMContentLoaded', carregarCatalogo);
 
 /**
- * Carrega produtos do catálogo via fetch da URL configurada e renderiza na tela.
- * A URL deve retornar um JSON com um array de produtos.
+ * Carrega produtos do catálogo usando Tabletop.js da URL configurada e renderiza na tela.
+ * A URL deve ser de uma planilha Google Sheets publicada para a web.
  */
-async function carregarCatalogo() {
+function carregarCatalogo() {
   // Verifica se o container do catálogo existe antes de continuar
   if (!catalogoContainer) {
     console.error("Elemento #catalogo não encontrado.");
@@ -29,43 +29,60 @@ async function carregarCatalogo() {
   // Exibe uma mensagem de carregamento enquanto os dados são buscados
   catalogoContainer.innerHTML = '<p>Carregando produtos...</p>';
 
-  try {
-    // Realiza a requisição para obter os dados do catálogo
-    const res = await fetch(CATALOGO_URL);
-
-    // Verifica se a resposta da requisição foi bem-sucedida (status 2xx)
-    if (!res.ok) {
-      throw new Error(`Erro ao buscar catálogo: Status ${res.status}`);
-    }
-
-    // Converte a resposta para JSON
-    const produtos = await res.json();
-
-    // Limpa o container e adiciona um título
-    catalogoContainer.innerHTML = '<h2>Catálogo de Produtos</h2>';
-
-    // Itera sobre os produtos recebidos, filtra pelos ativos e cria um card para cada um
-    produtos.filter(p => p.ativo).forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'produto-item'; // Classe para estilização
-      card.innerHTML = `
-        <img src="${p.imagem_url}" alt="${p.nome}" class="produto-imagem" />
-        <h3>${p.nome}</h3>
-        <p>R$ ${p.preco.toFixed(2)}</p>
-        <button class="add-to-cart-btn" data-product-id="${p.id}">Adicionar ao carrinho</button>
-      `;
-      // Adiciona um listener ao botão "Adicionar ao carrinho" para chamar a função adicionarAoCarrinho
-      card.querySelector('.add-to-cart-btn').addEventListener('click', () => adicionarAoCarrinho(p));
-      // Adiciona o card do produto ao container do catálogo
-      catalogoContainer.appendChild(card);
-    });
-
-  } catch (error) {
-    // Em caso de erro na requisição, exibe uma mensagem de erro no container do catálogo
-    catalogoContainer.innerHTML = `<p>Erro ao carregar catálogo: ${error.message}</p>`;
-    console.error("Detalhes do erro ao carregar catálogo:", error);
-  }
+  // Usa Tabletop.js para carregar os dados da planilha
+  Tabletop.init({
+    key: CATALOGO_URL, // A URL da planilha publicada
+    callback: showInfo, // Função a ser chamada quando os dados forem carregados
+    simpleSheet: true // Tenta carregar a primeira aba como um array de objetos simples
+  });
 }
+
+/**
+ * Função de callback para Tabletop.js, processa os dados carregados e renderiza o catálogo.
+ * @param {Array<Object>} data - Os dados carregados da planilha.
+ * @param {Object} tabletop - O objeto Tabletop.js.
+ */
+function showInfo(data, tabletop) {
+  // Verifica se os dados foram carregados corretamente e se é um array
+  if (!data || !Array.isArray(data)) {
+    catalogoContainer.innerHTML = '<p>Erro ao carregar catálogo: Formato de dados inesperado.</p>';
+    console.error("Dados recebidos do Tabletop.js não são um array:", data);
+    return;
+  }
+
+  // Limpa o container e adiciona um título
+  catalogoContainer.innerHTML = '<h2>Catálogo de Produtos</h2>';
+
+  // Itera sobre os produtos recebidos, filtra pelos ativos e cria um card para cada um
+  // Certifique-se de que os nomes das colunas na planilha (nome, preco, imagem_url, ativo)
+  // correspondem às chaves nos objetos 'p'. Tabletop.js usa os cabeçalhos da primeira linha como chaves.
+  data.filter(p => p.ativo && p.ativo.toLowerCase() === 'true').forEach(p => { // Filtra por 'ativo' sendo a string 'true'
+    const card = document.createElement('div');
+    card.className = 'produto-item'; // Classe para estilização
+    card.innerHTML = `
+      <img src="${p.imagem_url}" alt="${p.nome}" class="produto-imagem" />
+      <h3>${p.nome}</h3>
+      <p>R$ ${parseFloat(p.preco).toFixed(2)}</p> <button class="add-to-cart-btn" data-product-id="${p.id}">Adicionar ao carrinho</button>
+    `;
+    // Adiciona um listener ao botão "Adicionar ao carrinho" para chamar a função adicionarAoCarrinho
+    // Passa o objeto produto com preco convertido para número
+    card.querySelector('.add-to-cart-btn').addEventListener('click', () => adicionarAoCarrinho({
+        id: p.id, // Certifique-se que sua planilha tem uma coluna 'id'
+        nome: p.nome,
+        preco: parseFloat(p.preco),
+        imagem_url: p.imagem_url,
+        ativo: p.ativo
+    }));
+    // Adiciona o card do produto ao container do catálogo
+    catalogoContainer.appendChild(card);
+  });
+
+  // Se não houver produtos ativos após carregar
+   if (catalogoContainer.children.length <= 1) { // Verifica se só tem o título
+       catalogoContainer.innerHTML += '<p>Nenhum produto ativo encontrado no catálogo.</p>';
+   }
+}
+
 
 /**
  * Adiciona um produto ao carrinho ou incrementa a quantidade se já existir.
@@ -266,5 +283,3 @@ Entrega: ${dadosCliente.tipoEntrega}.
 
 // Chamada inicial para carregar o catálogo quando a página é carregada (já feito pelo DOMContentLoaded listener)
 // carregarCatalogo();
-
-
