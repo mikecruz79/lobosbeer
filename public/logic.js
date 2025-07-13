@@ -63,14 +63,43 @@ async function carregarConfiguracoes() {
             throw new Error(`Erro ao buscar configurações: Status ${res.status}`);
         }
         configLoja = await res.json(); // Armazena as configurações globalmente
-        console.log('Configurações carregadas:', configLoja); // Adicionado para depuração
+        console.log('Dados de configuração recebidos:', configLoja); // Adicionado para depuração
 
         // Atualiza os elementos da interface com as configurações
-        if (capaImg) capaImg.src = configLoja.capaUrl || '';
-        if (logoImg) logoImg.src = configLoja.logoUrl || '';
-        if (nomeLojaElem) nomeLojaElem.textContent = configLoja.nomeLoja || 'Nome da Loja';
-        if (enderecoLojaElem) enderecoLojaElem.textContent = configLoja.enderecoLoja || 'Endereço';
-        if (horarioFuncionamentoElem) horarioFuncionamentoElem.textContent = configLoja.horarioFuncionamento || 'Horário';
+        const nomeLojaElement = document.getElementById('nome-loja');
+        console.log('Elemento #nome-loja encontrado?', nomeLojaElement);
+        if (nomeLojaElement) {
+            nomeLojaElement.textContent = configLoja.nomeLoja || 'Nome da Loja';
+            console.log('#nome-loja atualizado para:', nomeLojaElement.textContent);
+        }
+
+        const enderecoLojaElement = document.getElementById('endereco-loja');
+        console.log('Elemento #endereco-loja encontrado?', enderecoLojaElement);
+        if (enderecoLojaElement) {
+            enderecoLojaElement.textContent = configLoja.enderecoLoja || 'Endereço';
+            console.log('#endereco-loja atualizado para:', enderecoLojaElement.textContent);
+        }
+
+        const horarioFuncionamentoElement = document.getElementById('horario-funcionamento');
+        console.log('Elemento #horario-funcionamento encontrado?', horarioFuncionamentoElement);
+        if (horarioFuncionamentoElement) {
+            horarioFuncionamentoElement.textContent = configLoja.horarioFuncionamento || 'Horário';
+            console.log('#horario-funcionamento atualizado para:', horarioFuncionamentoElement.textContent);
+        }
+
+        const logoImgElement = document.getElementById('logo-img');
+        console.log('Elemento #logo-img encontrado?', logoImgElement);
+        if (logoImgElement) {
+            logoImgElement.src = configLoja.logoUrl || '';
+            console.log('#logo-img src atualizado para:', logoImgElement.src);
+        }
+
+        const capaImgElement = document.getElementById('capa-img');
+        console.log('Elemento #capa-img encontrado?', capaImgElement);
+        if (capaImgElement) {
+            capaImgElement.src = configLoja.capaUrl || '';
+            console.log('#capa-img src atualizado para:', capaImgElement.src);
+        }
 
     } catch (error) {
         console.error('Erro ao carregar configurações da loja:', error);
