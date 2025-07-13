@@ -1,0 +1,5 @@
+# Ignorar diretório de módulos do Node
+node_modules/
+
+# Ignorar arquivos de análise de projeto local
+lobosbeer_project_analysis.md
