@@ -12,19 +12,20 @@ document.getElementById('logoutBtn').addEventListener('click', function() {
     window.location.href = 'login.html'; // Redireciona para a página de login
 });
 
-
-// Seleção de elementos do DOM para produtos
+// Seleção de elementos do DOM para produtos e seções do admin
 const productListBody = document.querySelector('#productList tbody');
 const addProductForm = document.getElementById('addProductForm');
 const newProductImageFile = document.getElementById('newProductImageFile');
 const newProductImageUrl = document.getElementById('newProductImageUrl');
 const uploadNewImageBtn = document.getElementById('uploadNewImageBtn'); // Botão de upload para novo produto
 
+const configSection = document.querySelector('.config-section');
+const productsSection = document.querySelector('.products-section');
+
 // Elementos de erro para o formulário de adicionar novo produto
 const newProductNameError = document.getElementById('newProductNameError');
 const newProductPriceError = document.getElementById('newProductPriceError');
 const newProductImageError = document.getElementById('newProductImageError');
-
 
 // Seleção de elementos do DOM para configurações
 const configForm = document.getElementById('configForm');
@@ -41,6 +42,34 @@ const uploadCapaBtn = document.getElementById('uploadCapaBtn');
 
 // Elementos de erro para o formulário de configurações
 const whatsappConfigError = document.getElementById('whatsappConfigError');
+
+// --- Funções de Animação (replicadas de logic.js para consistência) ---
+/**
+ * Mostra um elemento com animação de fade-in.
+ * @param {HTMLElement} element - O elemento DOM a ser mostrado.
+ * @param {string} displayType - O tipo de display CSS (ex: 'block', 'grid', 'flex').
+ */
+function showElementWithAnimation(element, displayType = 'block') {
+    if (element) {
+        element.style.display = displayType;
+        // Força o reflow para garantir que a transição ocorra
+        element.offsetHeight; 
+        element.classList.add('fade-in');
+    }
+}
+
+/**
+ * Esconde um elemento com animação de fade-out, removendo-o do fluxo após a transição.
+ * @param {HTMLElement} element - O elemento DOM a ser escondido.
+ */
+function hideElementWithAnimation(element) {
+    if (element) {
+        element.classList.remove('fade-in');
+        setTimeout(() => {
+            element.style.display = 'none';
+        }, 600); // Deve corresponder à duração da transição CSS
+    }
+}
 
 
 // --- Funções de Validação ---
@@ -143,6 +172,9 @@ async function loadProducts() {
             row.querySelector('.upload-single-image-btn').addEventListener('click', handleSingleImageUpload);
             row.querySelector('.delete-btn').addEventListener('click', deleteProduct);
         });
+
+        // Anima a seção de produtos para aparecer
+        showElementWithAnimation(productsSection, 'block');
 
     } catch (error) {
         console.error('Erro ao carregar produtos:', error);
@@ -361,7 +393,7 @@ addProductForm.addEventListener('submit', async function(event) {
 
      try {
          // Envie o novo produto para o backend
-         const addResponse = await fetch('/produtos', { // Rota POST para adicionar
+         const addResponse = await fetch('/produtos', {
              method: 'POST',
              headers: {
                  'Content-Type': 'application/json'
@@ -452,6 +484,8 @@ async function loadConfig() {
             logoUrlInput.value = config.logoUrl || '';
             capaUrlInput.value = config.capaUrl || '';
         }
+        // Anima a seção de configurações para aparecer
+        showElementWithAnimation(configSection, 'block');
 
     } catch (error) {
         console.error('Erro ao carregar configurações:', error);
@@ -586,8 +620,13 @@ uploadCapaBtn.addEventListener('click', async () => {
 // --- Inicialização ---
 
 // Carrega produtos e configurações ao carregar a página
-loadProducts();
-loadConfig();
+// As seções começarão ocultas e serão animadas quando seus dados forem carregados.
+
+// Adiciona um listener para carregar as seções quando o DOM estiver completamente carregado
+window.addEventListener('DOMContentLoaded', () => {
+    loadProducts();
+    loadConfig();
+});
 
 // Listener para validação do campo de WhatsApp nas configurações
 whatsappNumberConfigInput.addEventListener('input', () => validateWhatsapp(whatsappNumberConfigInput, whatsappConfigError));
