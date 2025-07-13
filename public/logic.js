@@ -446,6 +446,10 @@ function exibirFormulario() {
   } else {
      console.error("Elemento #continueBtn não encontrado.");
   }
+
+  // Torna o formulário visível e o anima
+  formContainer.style.display = 'block';
+  animateIn(formContainer);
 }
 
 /**
