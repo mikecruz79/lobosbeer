@@ -6,6 +6,7 @@
 let dadosCliente = {};
 let itensCarrinho = []; // Carrinho iniciado vazio
 let configLoja = {}; // Para armazenar as configurações da loja
+let produtosCatalogo = []; // Para armazenar os produtos carregados
 
 // Seleção de elementos do DOM para interagir com a interface
 const startOrderBtn = document.getElementById("startOrderBtn");
@@ -146,9 +147,10 @@ async function carregarCatalogo() {
 
     // Converte a resposta para JSON
     const produtos = await res.json();
+    produtosCatalogo = produtos; // Armazena na variável global
 
     // Chama a função para exibir os produtos carregados (agora diretamente do JSON)
-    showInfo(produtos);
+    showInfo(produtosCatalogo);
     // Anima o catálogo para aparecer
     catalogoContainer.style.display = 'block'; // Garante que esteja visível antes de animar
     animateIn(catalogoContainer);
@@ -195,16 +197,7 @@ function showInfo(data) {
     card.innerHTML = `
       <img src="${imageUrl}" alt="${p.nome || 'Produto sem nome'}" class="produto-imagem" onerror="this.onerror=null; this.src='https://placehold.co/150x100/EFEFEF/AAAAAA?text=Erro+Imagem';" />
       <h3>${p.nome || 'Produto sem nome'}</h3>
-      <p>R$ ${parseFloat(p.preco || 0).toFixed(2)}</p> <button class="add-to-cart-btn" data-product-id="${p.id}">Adicionar ao carrinho</button> `;
-    // Adiciona um listener ao botão "Adicionar ao carrinho" para chamar a função adicionarAoCarrinho
-    // Passa o objeto produto com preco convertido para número
-    card.querySelector('.add-to-cart-btn').addEventListener('click', () => adicionarAoCarrinho({
-        id: p.id, // Usa o ID do JSON
-        nome: p.nome || 'Produto sem nome',
-        preco: parseFloat(p.preco || 0), // Converte preço para número, com fallback para 0
-        imagem_url: imageUrl,
-        ativo: p.ativo === true // Garante que ativo é booleano
-    }));
+      <p>R$ ${parseFloat(p.preco || 0).toFixed(2)}</p> <button class="add-to-cart-btn" data-product-id="${p.id}" disabled>Adicionar ao carrinho</button> `;
     // Adiciona o card do produto ao container do catálogo
     catalogoContainer.appendChild(card);
   });
@@ -422,8 +415,30 @@ function exibirFormulario() {
               dadosCliente.endereco = endereco;
           }
 
-          // Ativa a exibição do carrinho após coletar os dados do cliente
-          ativarCarrinho();
+          // **NOVO FLUXO**
+          // Esconde o formulário e re-exibe o catálogo com os botões ativados
+          formContainer.style.display = 'none';
+          catalogoContainer.style.display = 'grid'; // Re-exibe o catálogo
+          animateIn(catalogoContainer);
+
+          // Ativa todos os botões "Adicionar ao carrinho"
+          const addButtons = document.querySelectorAll('.add-to-cart-btn');
+          addButtons.forEach(button => {
+              button.disabled = false;
+              // Adiciona o listener de clique AGORA, após a identificação
+              const productId = button.dataset.productId;
+              const produto = produtosCatalogo.find(p => p.id == productId); // Usa a variável global
+              if(produto) {
+                  button.addEventListener('click', () => adicionarAoCarrinho({
+                      id: produto.id,
+                      nome: produto.nome || 'Produto sem nome',
+                      preco: parseFloat(produto.preco || 0),
+                      imagem_url: produto.imagem_url,
+                      ativo: produto.ativo === true
+                  }));
+              }
+          });
+
       } else {
           alert('Por favor, corrija os campos destacados.');
       }
