@@ -70,7 +70,7 @@ function animateOut(element) {
  */
 async function carregarConfiguracoes() {
     try {
-        const res = await fetch(CONFIG_URL);
+        const res = await fetch('/config');
         if (!res.ok) {
             throw new Error(`Erro ao buscar configurações: Status ${res.status}`);
         }
@@ -137,7 +137,7 @@ async function carregarCatalogo() {
   try {
     // Realiza a requisição para obter os dados JSON do backend
     // Adicionado um timestamp para evitar cache
-    const res = await fetch(`${CATALOGO_URL}?_=${Date.now()}`);
+    const res = await fetch(`/produtos?_=${Date.now()}`);
 
     // Verifica se a resposta da requisição foi bem-sucedida (status 2xx)
     if (!res.ok) {
