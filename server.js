@@ -46,12 +46,12 @@ async function createTables() {
         await pool.query(`
             CREATE TABLE IF NOT EXISTS configurations (
                 id INTEGER PRIMARY KEY DEFAULT 1,
-                nomeLoja TEXT NOT NULL,
-                enderecoLoja TEXT NOT NULL,
-                horarioFuncionamento TEXT NOT NULL,
-                whatsappNumber TEXT NOT NULL,
-                logoUrl TEXT,
-                capaUrl TEXT
+                nomeloja TEXT NOT NULL,
+                enderecoloja TEXT NOT NULL,
+                horariofuncionamento TEXT NOT NULL,
+                whatsappnumber TEXT NOT NULL,
+                logourl TEXT,
+                capaurl TEXT
             );
         `);
         console.log('Tabelas "products" e "configurations" verificadas/criadas.');
@@ -60,17 +60,17 @@ async function createTables() {
         const result = await pool.query('SELECT COUNT(*) FROM configurations');
         if (parseInt(result.rows[0].count) === 0) {
             const defaultConfig = {
-                nomeLoja: "Delivery do Daniel",
-                enderecoLoja: "Endereço da Loja",
-                horarioFuncionamento: "Horário de Funcionamento",
-                whatsappNumber: "5551991778945",
-                logoUrl: "",
-                capaUrl: ""
+                nomeloja: "Delivery do Daniel",
+                enderecoloja: "Endereço da Loja",
+                horariofuncionamento: "Horário de Funcionamento",
+                whatsappnumber: "5551991778945",
+                logourl: "",
+                capaurl: ""
             };
             await pool.query(`
-                INSERT INTO configurations (nomeLoja, enderecoLoja, horarioFuncionamento, whatsappNumber, logoUrl, capaUrl)
+                INSERT INTO configurations (nomeloja, enderecoloja, horariofuncionamento, whatsappnumber, logourl, capaurl)
                 VALUES ($1, $2, $3, $4, $5, $6);
-            `, [defaultConfig.nomeLoja, defaultConfig.enderecoLoja, defaultConfig.horarioFuncionamento, defaultConfig.whatsappNumber, defaultConfig.logoUrl, defaultConfig.capaUrl]);
+            `, [defaultConfig.nomeloja, defaultConfig.enderecoloja, defaultConfig.horariofuncionamento, defaultConfig.whatsappnumber, defaultConfig.logourl, defaultConfig.capaurl]);
             console.log('Configurações padrão inseridas.');
         }
 
@@ -176,12 +176,12 @@ app.get('/config', async (req, res) => {
         } else {
             // Return a default config if nothing is in the database
             const defaultConfig = {
-                nomeLoja: "Delivery do Daniel",
-                enderecoLoja: "Endereço da Loja",
-                horarioFuncionamento: "Horário de Funcionamento",
-                whatsappNumber: "5551991778945",
-                logoUrl: "",
-                capaUrl: ""
+                nomeloja: "Delivery do Daniel",
+                enderecoloja: "Endereço da Loja",
+                horariofuncionamento: "Horário de Funcionamento",
+                whatsappnumber: "5551991778945",
+                logourl: "",
+                capaurl: ""
             };
             res.json(defaultConfig);
         }
