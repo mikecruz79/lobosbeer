@@ -69,35 +69,35 @@ async function carregarConfiguracoes() {
         const nomeLojaElement = document.getElementById('nome-loja');
         console.log('Elemento #nome-loja encontrado?', nomeLojaElement);
         if (nomeLojaElement) {
-            nomeLojaElement.textContent = configLoja.nomeLoja || 'Nome da Loja';
+            nomeLojaElement.textContent = configLoja.nomeLoja; // Alterado para usar diretamente a propriedade
             console.log('#nome-loja atualizado para:', nomeLojaElement.textContent);
         }
 
         const enderecoLojaElement = document.getElementById('endereco-loja');
         console.log('Elemento #endereco-loja encontrado?', enderecoLojaElement);
         if (enderecoLojaElement) {
-            enderecoLojaElement.textContent = configLoja.enderecoLoja || 'Endereço';
+            enderecoLojaElement.textContent = configLoja.enderecoLoja; // Alterado para usar diretamente a propriedade
             console.log('#endereco-loja atualizado para:', enderecoLojaElement.textContent);
         }
 
         const horarioFuncionamentoElement = document.getElementById('horario-funcionamento');
         console.log('Elemento #horario-funcionamento encontrado?', horarioFuncionamentoElement);
         if (horarioFuncionamentoElement) {
-            horarioFuncionamentoElement.textContent = configLoja.horarioFuncionamento || 'Horário';
+            horarioFuncionamentoElement.textContent = configLoja.horarioFuncionamento; // Alterado para usar diretamente a propriedade
             console.log('#horario-funcionamento atualizado para:', horarioFuncionamentoElement.textContent);
         }
 
         const logoImgElement = document.getElementById('logo-img');
         console.log('Elemento #logo-img encontrado?', logoImgElement);
         if (logoImgElement) {
-            logoImgElement.src = configLoja.logoUrl || '';
+            logoImgElement.src = configLoja.logoUrl; // Alterado para usar diretamente a propriedade
             console.log('#logo-img src atualizado para:', logoImgElement.src);
         }
 
         const capaImgElement = document.getElementById('capa-img');
         console.log('Elemento #capa-img encontrado?', capaImgElement);
         if (capaImgElement) {
-            capaImgElement.src = configLoja.capaUrl || '';
+            capaImgElement.src = configLoja.capaUrl; // Alterado para usar diretamente a propriedade
             console.log('#capa-img src atualizado para:', capaImgElement.src);
         }
 
