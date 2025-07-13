@@ -29,6 +29,30 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 
 /**
+ * Adiciona a classe 'fade-in' para elementos que devem aparecer com animação.
+ * @param {HTMLElement} element - O elemento DOM a ser animado.
+ */
+function animateIn(element) {
+    if (element) {
+        // Força o reflow para garantir que a transição ocorra
+        element.offsetHeight; 
+        element.classList.add('fade-in');
+    }
+}
+
+/**
+ * Remove a classe 'fade-in' (e esconde) um elemento, com animação.
+ * @param {HTMLElement} element - O elemento DOM a ser escondido.
+ */
+function animateOut(element) {
+    if (element) {
+        element.classList.remove('fade-in');
+        // Pode-se adicionar um timeout aqui se precisar esconder *depois* da animação
+        // Por enquanto, o display: none será instantâneo após a remoção da classe
+    }
+}
+
+/**
  * Carrega as configurações da loja do backend e atualiza a interface.
  */
 async function carregarConfiguracoes() {
@@ -82,6 +106,9 @@ async function carregarCatalogo() {
 
     // Chama a função para exibir os produtos carregados (agora diretamente do JSON)
     showInfo(produtos);
+    // Anima o catálogo para aparecer
+    catalogoContainer.style.display = 'block'; // Garante que esteja visível antes de animar
+    animateIn(catalogoContainer);
 
   } catch (error) {
     // Em caso de erro na requisição, exibe uma mensagem de erro
@@ -166,7 +193,12 @@ function adicionarAoCarrinho(produto) {
 // Adiciona um listener ao botão "Começar Pedido" para exibir o formulário do cliente
 // Este botão agora é o ponto de entrada para o fluxo do pedido e exibe o formulário.
 if (startOrderBtn) {
-  startOrderBtn.addEventListener('click', exibirFormulario);
+  startOrderBtn.addEventListener('click', () => {
+    animateOut(startOrderBtn); // Esconde o botão com animação
+    startOrderBtn.style.display = 'none'; // Oculta o botão após a animação
+    if (catalogoContainer) catalogoContainer.style.display = 'none'; // Esconde o catálogo
+    exibirFormulario();
+  });
 } else {
   console.error("Elemento #startOrderBtn não encontrado.");
 }
@@ -182,11 +214,6 @@ function exibirFormulario() {
     console.error("Elemento #formContainer não encontrado.");
     return;
   }
-
-  // Oculta o catálogo (se estiver visível) e o botão "Começar Pedido"
-  if (catalogoContainer) catalogoContainer.style.display = 'none';
-  if (startOrderBtn) startOrderBtn.style.display = 'none';
-
 
   // Preenche o container do formulário com o HTML do formulário
   formContainer.innerHTML = `
@@ -484,9 +511,8 @@ function ativarCarrinho() {
     return;
   }
 
-  // Oculta o formulário de dados do cliente
-  if (formContainer) formContainer.style.display = 'none';
-
+  animateOut(formContainer); // Esconde o formulário com animação
+  formContainer.style.display = 'none'; // Oculta o formulário
 
   // Calcula o total do carrinho
   const total = itensCarrinho.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
@@ -504,6 +530,10 @@ function ativarCarrinho() {
     <div id="avisoFinal">⚠️ Atenção: seu pedido ainda não foi pago. O valor da entrega será informado diretamente pelo Daniel no WhatsApp. Este é apenas o resumo do seu pedido. O pagamento e entrega serão organizados por lá.</div>
     ${itensCarrinho.length > 0 ? '<button id="btnFinalizarPedido">Finalizar Pedido</button>' : ''}
   `;
+
+  // Anima o carrinho para aparecer
+  cartContainer.style.display = 'block';
+  animateIn(cartContainer);
 
   // Adiciona um listener ao botão "Finalizar Pedido" se ele existir
   const finalizarBtn = document.getElementById('btnFinalizarPedido');
@@ -524,48 +554,37 @@ function ativarCarrinho() {
  * @returns {string} - A mensagem formatada para o WhatsApp.
  */
 function gerarMensagemWhatsApp() {
-  let msg = `Olá, meu nome é ${dadosCliente.nomeCompleto}.
-`;
+  let msg = `Olá, meu nome é ${dadosCliente.nomeCompleto}.\r\n`;
 
   // Adiciona tipo de entrega e endereço (se for tele-entrega)
-  msg += `Quero: ${dadosCliente.tipoEntrega}.
-`;
+  msg += `Quero: ${dadosCliente.tipoEntrega}.\r\n`;
   if (dadosCliente.tipoEntrega === 'Tele-entrega' && dadosCliente.endereco) {
-    msg += `Endereço: ${dadosCliente.endereco}.
-`;
+    msg += `Endereço: ${dadosCliente.endereco}.\r\n`;
   }
 
   // Adiciona forma de pagamento e troco (se for dinheiro)
-  msg += `Forma de pagamento: ${dadosCliente.formaPagamento}.
-`;
+  msg += `Forma de pagamento: ${dadosCliente.formaPagamento}.\r\n`;
   if (dadosCliente.formaPagamento === 'Dinheiro' && dadosCliente.trocoPara !== null) {
-      msg += `Troco para: R$ ${dadosCliente.trocoPara.toFixed(2)}.
-`;
+      msg += `Troco para: R$ ${dadosCliente.trocoPara.toFixed(2)}.\r\n`;
   }
 
 
-  msg += `
-*Itens:*
-`;
+  msg += `\r\n*Itens:*\r\n`;
 
   let total = 0;
   // Adiciona cada item do carrinho à mensagem
   itensCarrinho.forEach(item => {
     const sub = item.preco * item.quantidade;
     total += sub;
-    msg += `- ${item.nome} x${item.quantidade}: R$ ${sub.toFixed(2)}
-`;
+    msg += `- ${item.nome} x${item.quantidade}: R$ ${sub.toFixed(2)}\r\n`;
   });
 
   // Adiciona o total
-  msg += `
-*Total:* R$ ${total.toFixed(2)}
-`;
+  msg += `\r\n*Total:* R$ ${total.toFixed(2)}\r\n`;
 
   // Adiciona a pergunta sobre o custo da entrega condicionalmente
   if (dadosCliente.tipoEntrega === 'Tele-entrega') {
-      msg += `
-Quanto que vai custar a minha entrega?`;
+      msg += `\r\nQuanto que vai custar a minha entrega?`;
   }
 
 
