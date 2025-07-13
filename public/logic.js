@@ -26,6 +26,18 @@ window.addEventListener('DOMContentLoaded', async () => {
     await carregarConfiguracoes(); // Carrega configurações primeiro
     carregarCatalogo(); // Depois carrega o catálogo
     animateIn(startOrderBtn); // Garante que o botão inicial apareça com animação
+
+    // Adiciona o listener para o botão "Começar Pedido" AQUI, garantindo que o botão já existe.
+    if (startOrderBtn) {
+        startOrderBtn.addEventListener('click', () => {
+            animateOut(startOrderBtn); // Esconde o botão com animação
+            startOrderBtn.style.display = 'none'; // Oculta o botão após a animação
+            if (catalogoContainer) catalogoContainer.style.display = 'none'; // Esconde o catálogo
+            exibirFormulario();
+        });
+    } else {
+        console.error("Elemento #startOrderBtn não foi encontrado no DOM.");
+    }
 });
 
 
@@ -220,20 +232,6 @@ function adicionarAoCarrinho(produto) {
   // Atualiza a exibição do carrinho
   ativarCarrinho();
 }
-
-// Adiciona um listener ao botão "Começar Pedido" para exibir o formulário do cliente
-// Este botão agora é o ponto de entrada para o fluxo do pedido e exibe o formulário.
-if (startOrderBtn) {
-  startOrderBtn.addEventListener('click', () => {
-    animateOut(startOrderBtn); // Esconde o botão com animação
-    startOrderBtn.style.display = 'none'; // Oculta o botão após a animação
-    if (catalogoContainer) catalogoContainer.style.display = 'none'; // Esconde o catálogo
-    exibirFormulario();
-  });
-} else {
-  console.error("Elemento #startOrderBtn não encontrado.");
-}
-
 
 /**
  * Exibe o formulário para coletar os dados do cliente (Nome, WhatsApp, Tipo de Entrega, Endereço, Pagamento).
