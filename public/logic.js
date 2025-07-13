@@ -25,6 +25,7 @@ const horarioFuncionamentoElem = document.getElementById('horario-funcionamento'
 window.addEventListener('DOMContentLoaded', async () => {
     await carregarConfiguracoes(); // Carrega configurações primeiro
     carregarCatalogo(); // Depois carrega o catálogo
+    animateIn(startOrderBtn); // Garante que o botão inicial apareça com animação
 });
 
 
