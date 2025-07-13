@@ -69,35 +69,35 @@ async function carregarConfiguracoes() {
         const nomeLojaElement = document.getElementById('nome-loja');
         console.log('Elemento #nome-loja encontrado?', nomeLojaElement);
         if (nomeLojaElement) {
-            nomeLojaElement.textContent = configLoja.nomeLoja; // Alterado para usar diretamente a propriedade
+            nomeLojaElement.textContent = configLoja.nomeloja; // Alterado para usar diretamente a propriedade
             console.log('#nome-loja atualizado para:', nomeLojaElement.textContent);
         }
 
         const enderecoLojaElement = document.getElementById('endereco-loja');
         console.log('Elemento #endereco-loja encontrado?', enderecoLojaElement);
         if (enderecoLojaElement) {
-            enderecoLojaElement.textContent = configLoja.enderecoLoja; // Alterado para usar diretamente a propriedade
+            enderecoLojaElement.textContent = configLoja.enderecoloja; // Alterado para usar diretamente a propriedade
             console.log('#endereco-loja atualizado para:', enderecoLojaElement.textContent);
         }
 
         const horarioFuncionamentoElement = document.getElementById('horario-funcionamento');
         console.log('Elemento #horario-funcionamento encontrado?', horarioFuncionamentoElement);
         if (horarioFuncionamentoElement) {
-            horarioFuncionamentoElement.textContent = configLoja.horarioFuncionamento; // Alterado para usar diretamente a propriedade
+            horarioFuncionamentoElement.textContent = configLoja.horariofuncionamento; // Alterado para usar diretamente a propriedade
             console.log('#horario-funcionamento atualizado para:', horarioFuncionamentoElement.textContent);
         }
 
         const logoImgElement = document.getElementById('logo-img');
         console.log('Elemento #logo-img encontrado?', logoImgElement);
         if (logoImgElement) {
-            logoImgElement.src = configLoja.logoUrl; // Alterado para usar diretamente a propriedade
+            logoImgElement.src = configLoja.logourl; // Alterado para usar diretamente a propriedade
             console.log('#logo-img src atualizado para:', logoImgElement.src);
         }
 
         const capaImgElement = document.getElementById('capa-img');
         console.log('Elemento #capa-img encontrado?', capaImgElement);
         if (capaImgElement) {
-            capaImgElement.src = configLoja.capaUrl; // Alterado para usar diretamente a propriedade
+            capaImgElement.src = configLoja.capaurl; // Alterado para usar diretamente a propriedade
             console.log('#capa-img src atualizado para:', capaImgElement.src);
         }
 
@@ -574,7 +574,7 @@ function ativarCarrinho() {
       const msg = gerarMensagemWhatsApp();
       // Abre uma nova janela ou aba com o link do WhatsApp
       // Usa o número de WhatsApp das configurações da loja
-      window.open(`https://wa.me/${configLoja.whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+      window.open(`https://wa.me/${configLoja.whatsappnumber}?text=${encodeURIComponent(msg)}`, '_blank');
     });
   }
 }
