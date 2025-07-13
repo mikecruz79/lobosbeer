@@ -63,6 +63,7 @@ async function carregarConfiguracoes() {
             throw new Error(`Erro ao buscar configurações: Status ${res.status}`);
         }
         configLoja = await res.json(); // Armazena as configurações globalmente
+        console.log('Configurações carregadas:', configLoja); // Adicionado para depuração
 
         // Atualiza os elementos da interface com as configurações
         if (capaImg) capaImg.src = configLoja.capaUrl || '';
