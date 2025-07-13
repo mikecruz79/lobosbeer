@@ -477,12 +477,12 @@ async function loadConfig() {
 
         // Preenche o formulário com as configurações carregadas
         if (config) {
-            nomeLojaInput.value = config.nomeLoja || '';
-            enderecoLojaInput.value = config.enderecoLoja || '';
-            horarioFuncionamentoInput.value = config.horarioFuncionamento || '';
-            whatsappNumberConfigInput.value = config.whatsappNumber || '';
-            logoUrlInput.value = config.logoUrl || '';
-            capaUrlInput.value = config.capaUrl || '';
+            nomeLojaInput.value = config.nomeloja || '';
+            enderecoLojaInput.value = config.enderecoloja || '';
+            horarioFuncionamentoInput.value = config.horariofuncionamento || '';
+            whatsappNumberConfigInput.value = config.whatsappnumber || '';
+            logoUrlInput.value = config.logourl || '';
+            capaUrlInput.value = config.capaurl || '';
         }
         // Anima a seção de configurações para aparecer
         showElementWithAnimation(configSection, 'block');
@@ -501,25 +501,20 @@ configForm.addEventListener('submit', async function(event) {
     event.preventDefault();
 
     // Validação dos campos de configuração
-    const isNomeLojaValid = validateField(nomeLojaInput, null, nomeLojaInput.value.trim() !== '', 'Nome da loja é obrigatório.');
-    const isEnderecoLojaValid = validateField(enderecoLojaInput, null, enderecoLojaInput.value.trim() !== '', 'Endereço é obrigatório.');
-    const isHorarioValid = validateField(horarioFuncionamentoInput, null, horarioFuncionamentoInput.value.trim() !== '', 'Horário é obrigatório.');
-    const isWhatsappValid = validateWhatsapp(whatsappNumberConfigInput, whatsappConfigError);
+    const isWhatsappValid = whatsappNumberConfigInput.value.trim() === '' || validateWhatsapp(whatsappNumberConfigInput, whatsappConfigError);
 
-
-    if (!isNomeLojaValid || !isEnderecoLojaValid || !isHorarioValid || !isWhatsappValid) {
-        alert('Por favor, corrija os campos destacados nas configurações da loja.');
+    if (!isWhatsappValid) {
+        alert('Por favor, corrija o formato do número de WhatsApp.');
         return;
     }
 
-
     const updatedConfig = {
-        nomeLoja: nomeLojaInput.value.trim(),
-        enderecoLoja: enderecoLojaInput.value.trim(),
-        horarioFuncionamento: horarioFuncionamentoInput.value.trim(),
-        whatsappNumber: whatsappNumberConfigInput.value.trim(),
-        logoUrl: logoUrlInput.value.trim(),
-        capaUrl: capaUrlInput.value.trim()
+        nomeloja: nomeLojaInput.value.trim(),
+        enderecoloja: enderecoLojaInput.value.trim(),
+        horariofuncionamento: horarioFuncionamentoInput.value.trim(),
+        whatsappnumber: whatsappNumberConfigInput.value.trim(),
+        logourl: logoUrlInput.value.trim(),
+        capaurl: capaUrlInput.value.trim()
     };
 
     try {

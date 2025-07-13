@@ -193,31 +193,33 @@ app.get('/config', async (req, res) => {
 
 // Rota POST para salvar as configurações da loja
 app.post('/config', async (req, res) => {
-    const { nomeLoja, enderecoLoja, horarioFuncionamento, whatsappNumber, logoUrl, capaUrl } = req.body;
-
-    // Validação básica das configurações
-    if (!nomeLoja || !enderecoLoja || !horarioFuncionamento || !whatsappNumber) {
-        return res.status(400).json({ error: 'Dados de configuração inválidos. Nome, endereço, horário e WhatsApp são obrigatórios.' });
-    }
+    const newConfigData = req.body;
 
     try {
-        const result = await pool.query('SELECT COUNT(*) FROM configurations WHERE id = 1');
-        const count = parseInt(result.rows[0].count);
-
-        if (count > 0) {
-            // Update existing configuration
-            await pool.query(`
-                UPDATE configurations
-                SET nomeLoja = $1, enderecoLoja = $2, horarioFuncionamento = $3, whatsappNumber = $4, logoUrl = $5, capaUrl = $6
-                WHERE id = 1;
-            `, [nomeLoja, enderecoLoja, horarioFuncionamento, whatsappNumber, logoUrl, capaUrl]);
-        } else {
-            // Insert new configuration (should only happen once)
-            await pool.query(`
-                INSERT INTO configurations (id, nomeLoja, enderecoLoja, horarioFuncionamento, whatsappNumber, logoUrl, capaUrl)
-                VALUES (1, $1, $2, $3, $4, $5, $6);
-            `, [nomeLoja, enderecoLoja, horarioFuncionamento, whatsappNumber, logoUrl, capaUrl]);
+        // 1. Buscar a configuração atual do banco de dados
+        const currentConfigResult = await pool.query('SELECT * FROM configurations WHERE id = 1');
+        if (currentConfigResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Configuração não encontrada para atualizar.' });
         }
+        const currentConfig = currentConfigResult.rows[0];
+
+        // 2. Mesclar os dados: use o novo valor se ele não for vazio/nulo, senão mantenha o antigo
+        const finalConfig = {
+            nomeloja: newConfigData.nomeloja || currentConfig.nomeloja,
+            enderecoloja: newConfigData.enderecoloja || currentConfig.enderecoloja,
+            horariofuncionamento: newConfigData.horariofuncionamento || currentConfig.horariofuncionamento,
+            whatsappnumber: newConfigData.whatsappnumber || currentConfig.whatsappnumber,
+            logourl: newConfigData.logourl !== undefined ? newConfigData.logourl : currentConfig.logourl,
+            capaurl: newConfigData.capaurl !== undefined ? newConfigData.capaurl : currentConfig.capaurl
+        };
+
+        // 3. Atualizar o banco de dados com a configuração final
+        await pool.query(`
+            UPDATE configurations
+            SET nomeloja = $1, enderecoloja = $2, horariofuncionamento = $3, whatsappnumber = $4, logourl = $5, capaurl = $6
+            WHERE id = 1;
+        `, [finalConfig.nomeloja, finalConfig.enderecoloja, finalConfig.horariofuncionamento, finalConfig.whatsappnumber, finalConfig.logourl, finalConfig.capaurl]);
+
         res.status(200).json({ message: 'Configurações salvas com sucesso!' });
     } catch (error) {
         console.error('Erro ao salvar configurações no banco de dados:', error);
