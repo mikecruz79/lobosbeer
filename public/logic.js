@@ -154,9 +154,13 @@ function showInfo(produtos) {
   for (const categoria in produtosAgrupados) {
     const secao = document.createElement('div');
     secao.className = 'category-section';
+    
+    // Cria um ID único para cada container de swiper para poder inicializá-lo individualmente
+    const swiperContainerId = `swiper-container-${categoria.replace(/\s+/g, '-')}`;
+
     secao.innerHTML = `
       <h2 class="category-title">${categoria}</h2>
-      <div class="swiper-container">
+      <div id="${swiperContainerId}" class="swiper-container">
         <div class="swiper-wrapper"></div>
         <div class="swiper-button-next"></div>
         <div class="swiper-button-prev"></div>
@@ -184,25 +188,26 @@ function showInfo(produtos) {
         }
       });
     });
-  }
 
-  new Swiper('.swiper-container', {
-    effect: 'coverflow',
-    grabCursor: true,
-    centeredSlides: true,
-    slidesPerView: 'auto',
-    coverflowEffect: {
-        rotate: 50,
-        stretch: 0,
-        depth: 100,
-        modifier: 1,
-        slideShadows: true,
-    },
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-  });
+    // Inicializa o Swiper para ESTE container específico
+    new Swiper(`#${swiperContainerId}`, {
+      effect: 'coverflow',
+      grabCursor: true,
+      centeredSlides: true,
+      slidesPerView: 'auto',
+      coverflowEffect: {
+          rotate: 50,
+          stretch: 0,
+          depth: 100,
+          modifier: 1,
+          slideShadows: true,
+      },
+      navigation: {
+        nextEl: `#${swiperContainerId} .swiper-button-next`,
+        prevEl: `#${swiperContainerId} .swiper-button-prev`,
+      },
+    });
+  }
 }
 
 function adicionarAoCarrinho(produto, botao) {
