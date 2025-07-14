@@ -124,6 +124,7 @@ async function carregarCatalogo() {
             throw new Error(`Erro ao buscar catálogo: Status ${res.status}`);
         }
         produtosCatalogo = await res.json();
+        console.log('Produtos recebidos do servidor:', produtosCatalogo); // Log de diagnóstico
         showInfo(produtosCatalogo);
     } catch (error) {
         catalogoContainer.innerHTML = `<p>Erro ao carregar catálogo: ${error.message}</p>`;
@@ -132,12 +133,13 @@ async function carregarCatalogo() {
 }
 
 function showInfo(produtos) {
-  if (!produtos || produtos.length === 0) {
-    catalogoContainer.innerHTML = '<h2>Catálogo</h2><p>Nenhum produto encontrado.</p>';
+  const produtosAtivos = produtos ? produtos.filter(p => p.ativo === true) : [];
+
+  if (produtosAtivos.length === 0) {
+    catalogoContainer.innerHTML = '<h2>Catálogo</h2><p class="empty-catalog-message">Nenhum produto encontrado no momento. Volte em breve!</p>';
     return;
   }
 
-  const produtosAtivos = produtos.filter(p => p.ativo === true);
   const produtosAgrupados = produtosAtivos.reduce((acc, produto) => {
     const categoria = produto.categoria || 'Outros';
     if (!acc[categoria]) {
