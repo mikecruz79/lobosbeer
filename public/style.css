@@ -254,6 +254,28 @@ button {
   box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
 }
 
+.form-error-feedback {
+  color: #e74c3c;
+  background-color: #fbe2e0;
+  border: 1px solid #e74c3c;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+  display: none; /* Começa escondido */
+}
+
+.form-shake {
+  animation: form-shake 0.5s;
+}
+
+@keyframes form-shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
 .error-message-field {
   color: #e74c3c;
   font-size: 0.9em;

@@ -257,6 +257,7 @@ function criarFormulario() {
     formContainer.innerHTML = `
       <h2><i class="fas fa-user-shield"></i> Seus Dados</h2>
       <form id="orderForm">
+        <div id="formErrorFeedback" class="form-error-feedback"></div>
         <div class="form-group">
             <label for="nameInput"><i class="fas fa-user"></i> Nome completo:</label>
             <input type="text" id="nameInput" required maxlength="40">
@@ -341,6 +342,8 @@ function exibirFormulario() {
 
   // Listener para o botão final de enviar
   continueBtn.onclick = () => {
+    const formErrorFeedback = document.getElementById('formErrorFeedback');
+
     // Validação completa
     const isNameValid = validateFullName(nameInput, document.getElementById('nameError'));
     const isWhatsappValid = validateWhatsapp(whatsappInput, document.getElementById('whatsappError'));
@@ -356,7 +359,19 @@ function exibirFormulario() {
       isChangeValid = validateChange(changeInput, document.getElementById('changeError'));
     }
 
+    // Logs de depuração
+    console.log('--- Verificação de Validação ---');
+    console.log('Nome Válido:', isNameValid);
+    console.log('WhatsApp Válido:', isWhatsappValid);
+    console.log('Email Válido:', isEmailValid);
+    console.log('Tipo de Entrega Válido:', isDeliveryTypeValid);
+    console.log('Endereço Válido:', isAddressValid);
+    console.log('Método de Pagamento Válido:', isPaymentMethodValid);
+    console.log('Troco Válido:', isChangeValid);
+    console.log('-----------------------------');
+
     if (isNameValid && isWhatsappValid && isEmailValid && isDeliveryTypeValid && isAddressValid && isPaymentMethodValid && isChangeValid) {
+      formErrorFeedback.style.display = 'none'; // Esconde o erro se tudo estiver ok
       // Coleta os dados do cliente
       dadosCliente = {
         nomeCompleto: nameInput.value.trim(),
@@ -372,7 +387,13 @@ function exibirFormulario() {
       const msg = gerarMensagemWhatsApp();
       window.open(`https://wa.me/${configLoja.whatsappnumber}?text=${encodeURIComponent(msg)}`, '_blank');
     } else {
-      alert('Por favor, corrija os campos destacados.');
+      // Mostra feedback de erro aprimorado
+      formErrorFeedback.textContent = 'Por favor, corrija os campos destacados em vermelho.';
+      formErrorFeedback.style.display = 'block';
+      const orderForm = document.getElementById('orderForm');
+      orderForm.classList.remove('form-shake'); // Remove para reiniciar a animação
+      void orderForm.offsetWidth; // Força o reflow
+      orderForm.classList.add('form-shake');
     }
   };
 }
