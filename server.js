@@ -23,11 +23,13 @@ const pool = new Pool({
 
 // Testar a conexão com o banco de dados ao iniciar
 pool.connect()
-    .then(client => {
+    .then(async client => {
         console.log('Conectado ao PostgreSQL!');
         client.release(); // Libera o cliente
         // Criar tabelas se não existirem
-        createTables();
+        await createTables();
+        // Roda a migração para garantir que colunas novas existam
+        await migrateDatabase();
     })
     .catch(err => console.error('Erro ao conectar ao PostgreSQL:', err.stack));
 
@@ -40,7 +42,8 @@ async function createTables() {
                 nome TEXT NOT NULL,
                 preco NUMERIC(10, 2) NOT NULL,
                 imagem_url TEXT,
-                ativo BOOLEAN NOT NULL DEFAULT TRUE
+                ativo BOOLEAN NOT NULL DEFAULT TRUE,
+                categoria TEXT
             );
         `);
         await pool.query(`
@@ -79,6 +82,27 @@ async function createTables() {
     }
 }
 
+// Função para migrar o banco de dados (adicionar colunas, etc.)
+async function migrateDatabase() {
+    try {
+        // Verifica se a coluna 'categoria' existe na tabela 'products'
+        const res = await pool.query(`
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='products' AND column_name='categoria'
+        `);
+        
+        // Se a coluna não existir, adiciona-a
+        if (res.rows.length === 0) {
+            console.log('Migrando banco de dados: Adicionando coluna "categoria" na tabela "products".');
+            await pool.query('ALTER TABLE products ADD COLUMN categoria TEXT');
+            console.log('Migração concluída com sucesso.');
+        }
+    } catch (err) {
+        console.error('Erro durante a migração do banco de dados:', err.stack);
+    }
+}
+
 // Configuração do Multer para upload de arquivos na memória
 const upload = multer({ storage: multer.memoryStorage() }); // Armazena o arquivo na memória
 
@@ -103,7 +127,7 @@ app.get('/produtos', async (req, res) => {
 
 // Rota POST para adicionar um NOVO produto
 app.post('/produtos', async (req, res) => {
-    const { nome, preco, imagem_url, ativo } = req.body;
+    const { nome, preco, imagem_url, ativo, categoria } = req.body;
     const id = uuidv4(); // Gerar um ID único usando uuid
 
     // Validação básica
@@ -113,8 +137,8 @@ app.post('/produtos', async (req, res) => {
 
     try {
         const result = await pool.query(
-            'INSERT INTO products (id, nome, preco, imagem_url, ativo) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-            [id, nome, preco, imagem_url, ativo]
+            'INSERT INTO products (id, nome, preco, imagem_url, ativo, categoria) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+            [id, nome, preco, imagem_url, ativo, categoria]
         );
         res.status(201).json({ message: 'Produto adicionado com sucesso!', product: result.rows[0] });
     } catch (error) {
@@ -126,7 +150,7 @@ app.post('/produtos', async (req, res) => {
 // Rota PUT para atualizar um produto existente pelo ID
 app.put('/produtos/:id', async (req, res) => {
     const productId = req.params.id;
-    const { nome, preco, imagem_url, ativo } = req.body;
+    const { nome, preco, imagem_url, ativo, categoria } = req.body;
 
     // Validação básica
     if (!nome || typeof preco !== 'number' || typeof ativo !== 'boolean') {
@@ -135,8 +159,8 @@ app.put('/produtos/:id', async (req, res) => {
 
     try {
         const result = await pool.query(
-            'UPDATE products SET nome = $1, preco = $2, imagem_url = $3, ativo = $4 WHERE id = $5 RETURNING *',
-            [nome, preco, imagem_url, ativo, productId]
+            'UPDATE products SET nome = $1, preco = $2, imagem_url = $3, ativo = $4, categoria = $5 WHERE id = $6 RETURNING *',
+            [nome, preco, imagem_url, ativo, categoria, productId]
         );
 
         if (result.rows.length === 0) {

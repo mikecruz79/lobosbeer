@@ -154,6 +154,7 @@ async function loadProducts() {
                 <td data-label="ID">${product.id}</td>
                 <td data-label="Nome"><input type="text" value="${product.nome || ''}" data-field="nome"></td>
                 <td data-label="Preço"><input type="number" step="0.01" value="${product.preco || 0}" data-field="preco"></td>
+                <td data-label="Categoria"><input type="text" value="${product.categoria || ''}" data-field="categoria"></td>
                 <td data-label="Imagem" class="image-cell">
                     <input type="text" value="${product.imagem_url || ''}" data-field="imagem_url">
                     <input type="file" accept="image/*" class="upload-single-image-file">
@@ -192,6 +193,7 @@ async function saveProduct(event) {
 
     const nameInput = row.querySelector(`input[data-field="nome"]`);
     const priceInput = row.querySelector(`input[data-field="preco"]`);
+    const categoryInput = row.querySelector(`input[data-field="categoria"]`);
     const imageUrlInput = row.querySelector(`input[data-field="imagem_url"]`);
     const activeInput = row.querySelector(`input[data-field="ativo"]`);
 
@@ -209,6 +211,7 @@ async function saveProduct(event) {
         id: productId,
         nome: nameInput.value.trim(),
         preco: parseFloat(priceInput.value),
+        categoria: categoryInput.value.trim(),
         imagem_url: imageUrlInput.value.trim(),
         ativo: activeInput.checked
     };
@@ -329,6 +332,7 @@ addProductForm.addEventListener('submit', async function(event) {
 
     const newProductNameInput = document.getElementById('newProductName');
     const newProductPriceInput = document.getElementById('newProductPrice');
+    const newProductCategoryInput = document.getElementById('newProductCategory');
     const newProductActiveInput = document.getElementById('newProductActive');
     const newProductImageUrlValue = newProductImageUrl.value.trim(); // Valor do campo de texto URL
     const newProductImageFileValue = newProductImageFile.files[0]; // Arquivo selecionado
@@ -387,6 +391,7 @@ addProductForm.addEventListener('submit', async function(event) {
         id: newProductId,
         nome: newProductNameInput.value.trim(),
         preco: parseFloat(newProductPriceInput.value),
+        categoria: newProductCategoryInput.value.trim(),
         imagem_url: imageUrl, // Usa o URL final (texto ou do Imgur)
         ativo: newProductActiveInput.checked
     };

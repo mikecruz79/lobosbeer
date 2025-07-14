@@ -126,82 +126,86 @@ async function carregarConfiguracoes() {
  * e renderiza os produtos ativos na tela.
  */
 async function carregarCatalogo() {
-  // Verifica se o container do catálogo existe antes de continuar
   if (!catalogoContainer) {
     console.error("Elemento #catalogo não encontrado.");
     return;
   }
-
-  // Exibe uma mensagem de carregamento enquanto os dados são buscados
   catalogoContainer.innerHTML = '<p>Carregando produtos...</p>';
-
   try {
-    // Realiza a requisição para obter os dados JSON do backend
-    // Adicionado um timestamp para evitar cache
     const res = await fetch(`/produtos?_=${Date.now()}`);
-
-    // Verifica se a resposta da requisição foi bem-sucedida (status 2xx)
     if (!res.ok) {
-      throw new Error(`Erro ao buscar catálogo do backend: Status ${res.status}`);
+      throw new Error(`Erro ao buscar catálogo: Status ${res.status}`);
     }
-
-    // Converte a resposta para JSON
-    const produtos = await res.json();
-    produtosCatalogo = produtos; // Armazena na variável global
-
-    // Chama a função para exibir os produtos carregados (agora diretamente do JSON)
+    produtosCatalogo = await res.json();
     showInfo(produtosCatalogo);
-    // Anima o catálogo para aparecer
-    catalogoContainer.style.display = 'block'; // Garante que esteja visível antes de animar
+    catalogoContainer.style.display = 'block';
     animateIn(catalogoContainer);
-
   } catch (error) {
-    // Em caso de erro na requisição, exibe uma mensagem de erro
     catalogoContainer.innerHTML = `<p>Erro ao carregar catálogo: ${error.message}</p>`;
-    console.error("Detalhes do erro ao carregar catálogo:", error);
+    console.error("Detalhes do erro:", error);
   }
 }
 
-
-/**
- * Processa os dados carregados (agora de um JSON do backend) e renderiza o catálogo.
- * @param {Array<Object>} data - Os dados carregados do backend (array de objetos JSON).
- */
-function showInfo(data) {
-  // Verifica se os dados foram carregados corretamente e se é um array
-  if (!data || !Array.isArray(data) || data.length === 0) {
-    catalogoContainer.innerHTML = '<h2>Catálogo de Produtos</h2><p>Nenhum produto encontrado no catálogo.</p>';
-    console.warn("Dados de catálogo recebidos não são um array, estão vazios ou formato inesperado:", data);
+function showInfo(produtos) {
+  if (!produtos || produtos.length === 0) {
+    catalogoContainer.innerHTML = '<h2>Catálogo</h2><p>Nenhum produto encontrado.</p>';
     return;
   }
 
-  // Limpa o container e adiciona um título
-  catalogoContainer.innerHTML = '<h2>Catálogo de Produtos</h2>';
+  const produtosAtivos = produtos.filter(p => p.ativo === true);
+  const produtosAgrupados = produtosAtivos.reduce((acc, produto) => {
+    const categoria = produto.categoria || 'Outros';
+    if (!acc[categoria]) {
+      acc[categoria] = [];
+    }
+    acc[categoria].push(produto);
+    return acc;
+  }, {});
 
-  // Itera sobre os produtos recebidos, filtra pelos ativos e cria um card para cada um
-  // Certifique-se de que os objetos no JSON tenham as propriedades esperadas (id, nome, preco, imagem_url, ativo)
-  const produtosAtivos = data.filter(p => p.ativo === true); // Filtra por 'ativo' sendo o booleano true
+  catalogoContainer.innerHTML = ''; // Limpa o container
 
-  if (produtosAtivos.length === 0) {
-       catalogoContainer.innerHTML += '<p>Nenhum produto ativo encontrado no catálogo.</p>';
-       return; // Sai da função se não houver produtos ativos
+  for (const categoria in produtosAgrupados) {
+    const secao = document.createElement('div');
+    secao.className = 'category-section';
+    secao.innerHTML = `
+      <h2 class="category-title">${categoria}</h2>
+      <div class="swiper-container">
+        <div class="swiper-wrapper"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+      </div>
+    `;
+    catalogoContainer.appendChild(secao);
+
+    const swiperWrapper = secao.querySelector('.swiper-wrapper');
+    produtosAgrupados[categoria].forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'swiper-slide produto-item';
+      const imageUrl = p.imagem_url || 'https://placehold.co/150x100/EFEFEF/AAAAAA?text=Sem+Imagem';
+      card.innerHTML = `
+        <img src="${imageUrl}" alt="${p.nome}" class="produto-imagem">
+        <h3>${p.nome}</h3>
+        <p>R$ ${parseFloat(p.preco).toFixed(2)}</p>
+        <button class="add-to-cart-btn" data-product-id="${p.id}" disabled>Adicionar</button>
+      `;
+      swiperWrapper.appendChild(card);
+    });
   }
 
-
-  produtosAtivos.forEach(p => {
-    const card = document.createElement('div');
-    card.className = 'produto-item'; // Classe para estilização
-    // Adicionado um fallback para a imagem caso a URL esteja vazia ou inválida
-    const imageUrl = p.imagem_url && p.imagem_url.trim() !== '' ? p.imagem_url : 'https://placehold.co/150x100/EFEFEF/AAAAAA?text=Sem+Imagem';
-
-    card.innerHTML = `
-      <img src="${imageUrl}" alt="${p.nome || 'Produto sem nome'}" class="produto-imagem" onerror="this.onerror=null; this.src='https://placehold.co/150x100/EFEFEF/AAAAAA?text=Erro+Imagem';" />
-      <h3>${p.nome || 'Produto sem nome'}</h3>
-      <p>R$ ${parseFloat(p.preco || 0).toFixed(2)}</p> <button class="add-to-cart-btn" data-product-id="${p.id}" disabled>Adicionar ao carrinho</button> `;
-    // Adiciona o card do produto ao container do catálogo
-    catalogoContainer.appendChild(card);
+  // Inicializa todos os carrosséis Swiper
+  new Swiper('.swiper-container', {
+    slidesPerView: 'auto',
+    spaceBetween: 15,
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    breakpoints: {
+        320: { slidesPerView: 2, spaceBetween: 10 },
+        480: { slidesPerView: 3, spaceBetween: 15 },
+        640: { slidesPerView: 4, spaceBetween: 20 }
+    }
   });
-
 }
 
 
@@ -239,29 +243,29 @@ function exibirFormulario() {
 
   // Preenche o container do formulário com o HTML do formulário
   formContainer.innerHTML = `
-    <h2>Dados do Cliente</h2>
+    <h2><i class="fas fa-user-shield"></i> Seus Dados</h2>
     <form id="orderForm">
       <div class="form-group">
-          <label for="nameInput">Nome completo:</label>
+          <label for="nameInput"><i class="fas fa-user"></i> Nome completo:</label>
           <input type="text" id="nameInput" required maxlength="40">
           <p class="error-message-field" id="nameError"></p>
       </div>
 
       <div class="form-group">
-          <label for="whatsappInput">WhatsApp:</label>
+          <label for="whatsappInput"><i class="fab fa-whatsapp"></i> WhatsApp:</label>
           <input type="text" id="whatsappInput" required inputmode="numeric" pattern="[0-9]*" minlength="11" maxlength="13">
            <p class="error-message-field" id="whatsappError"></p>
       </div>
 
       <div class="form-group">
-           <label for="emailInput">E-mail:</label>
+           <label for="emailInput"><i class="fas fa-at"></i> E-mail:</label>
            <input type="email" id="emailInput" required>
            <p class="error-message-field" id="emailError"></p>
       </div>
 
 
       <div class="form-group">
-          <label for="deliveryTypeSelect">Tipo de entrega:</label>
+          <label for="deliveryTypeSelect"><i class="fas fa-truck"></i> Tipo de entrega:</label>
           <select id="deliveryTypeSelect" required>
             <option value="">Selecione...</option>
             <option value="Retirada">Retirada</option>
@@ -271,13 +275,13 @@ function exibirFormulario() {
       </div>
 
       <div id="addressField" class="form-group" style="display:none;">
-        <label for="addressInput">Endereço:</label>
+        <label for="addressInput"><i class="fas fa-map-marker-alt"></i> Endereço:</label>
         <input type="text" id="addressInput">
         <p class="error-message-field" id="addressError"></p>
       </div>
 
       <div class="form-group">
-          <label for="paymentMethodSelect">Forma de Pagamento:</label>
+          <label for="paymentMethodSelect"><i class="fas fa-credit-card"></i> Forma de Pagamento:</label>
           <select id="paymentMethodSelect" required>
             <option value="">Selecione...</option>
             <option value="Cartão de Crédito">Cartão de Crédito</option>
@@ -289,13 +293,13 @@ function exibirFormulario() {
       </div>
 
       <div id="changeField" class="form-group" style="display:none;">
-          <label for="changeInput">Troco para quanto? (Opcional):</label>
+          <label for="changeInput"><i class="fas fa-money-bill-wave"></i> Troco para quanto? (Opcional):</label>
           <input type="number" id="changeInput" step="0.01" min="0">
           <p class="error-message-field" id="changeError"></p>
       </div>
 
 
-      <button type="button" id="continueBtn">Continuar</button>
+      <button type="button" id="continueBtn">Continuar para os Produtos <i class="fas fa-arrow-right"></i></button>
     </form>
   `;
 
