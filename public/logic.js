@@ -126,6 +126,7 @@ async function carregarCatalogo() {
         produtosCatalogo = await res.json();
         console.log('Produtos recebidos do servidor:', produtosCatalogo); // Log de diagnóstico
         showInfo(produtosCatalogo);
+        animateIn(catalogoContainer); // Adiciona a animação após carregar
     } catch (error) {
         catalogoContainer.innerHTML = `<p>Erro ao carregar catálogo: ${error.message}</p>`;
         console.error("Detalhes do erro:", error);
