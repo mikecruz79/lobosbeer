@@ -1,45 +1,52 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Lobo Beer – Cardápio</title>
-  <style>
-    body{font-family:sans-serif;margin:0;padding:0;background:#111;color:#f5f5f5}
-    header,footer{text-align:center;padding:1rem}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1rem;padding:1rem}
-    .card{background:#222;border-radius:8px;padding:.5rem;text-align:center}
-    .card img{max-width:100%;border-radius:4px}
-    .price{font-weight:bold}
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Consider adding a <meta name="description"> for SEO and sharing -->
+  <title>Delivery do Daniel</title>
+  <!-- Preconnect to improve font/icon loading performance -->
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header><h1>Lobo Beer 🍻</h1></header>
+  <header class="site-header">
+      <!-- Consider lazy-loading large header images with loading="lazy" -->
+      <img id="capa-img" src="" alt="Imagem de Capa do Delivery" class="capa-img" loading="lazy">
+      <div class="header-overlay">
+          <div id="cartIconContainer" role="region" aria-live="polite">
+            <i id="cartIcon" class="fas fa-shopping-cart" aria-hidden="true"></i>
+            <span id="cartItemCount" aria-label="Itens no carrinho">0</span>
+          </div>
+          <img id="logo-img" src="" alt="Logo da Loja" class="logo-img" loading="lazy">
+          <h1 id="nome-loja"></h1>
+          <p id="endereco-loja"></p>
+          <p id="horario-funcionamento"></p>
+      </div>
+  </header>
 
-  <main id="produtos" class="grid"></main>
+  <div class="container">
+      <div id="catalogo" class="catalogo-container"></div>
+      <div id="formContainer"></div>
+      <div id="cartContainer"></div>
+  </div>
 
-  <footer>© 2024 Lobo Beer – Desenvolvido com ❤️</footer>
+  <footer class="site-footer">
+    <div class="footer-content">
+      <p>&copy; 2024 Lobos Beer. Todos os direitos reservados.</p>
+      <div class="footer-social-icons">
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+        <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+      <p class="footer-dev-note">Desenvolvido com ❤️</p>
+    </div>
+  </footer>
 
-  <script>
-    fetch('/produtos')
-      .then(r => r.json())
-      .then(lista => {
-        const grid = document.getElementById('produtos');
-        lista.filter(p => p.ativo).forEach(p => {
-          grid.insertAdjacentHTML('beforeend', `
-            <div class="card">
-              <img src="${p.imagem_url || 'https://via.placeholder.com/150'}" alt="${p.nome}">
-              <p>${p.nome}</p>
-              <p class="price">R$ ${Number(p.preco).toFixed(2)}</p>
-            </div>
-          `);
-        });
-      })
-      .catch(err => {
-        console.error('Falha ao carregar produtos:', err);
-        document.getElementById('produtos').textContent =
-          'Erro ao carregar cardápio 😕';
-      });
-  </script>
+  <!-- Load scripts with defer to prevent render-blocking -->
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js" defer></script>
+  <script src="logic.js" defer></script>
 </body>
 </html>
