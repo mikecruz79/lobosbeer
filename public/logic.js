@@ -1,6 +1,6 @@
 // scripts/logic.js
 
-// Lógica de interação para o Delivery do Daniel
+// Lógica de interação para o Delivery do Daniel (v2)
 
 // Variáveis globais para armazenar dados do cliente e itens do carrinho
 let dadosCliente = {};
