@@ -338,7 +338,7 @@ button {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  height: 100%; /* Garante que todos os slides tenham a mesma altura */
+  min-height: 300px; /* Garante altura mínima para caber todo o conteúdo */
 }
 
 .produto-item:hover {
