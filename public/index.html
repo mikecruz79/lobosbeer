@@ -12,6 +12,10 @@
   <header class="site-header">
       <img id="capa-img" src="" alt="Imagem de Capa do Delivery" class="capa-img">
       <div class="header-overlay">
+          <div id="cartIconContainer">
+            <i id="cartIcon" class="fas fa-shopping-cart"></i>
+            <span id="cartItemCount">0</span>
+          </div>
           <img id="logo-img" src="" alt="Logo da Loja" class="logo-img">
           <h1 id="nome-loja"></h1>
           <p id="endereco-loja"></p>
@@ -20,11 +24,9 @@
   </header>
 
   <div class="container">
-      <button id="startOrderBtn">Começar Pedido</button>
+      <div id="catalogo" class="catalogo-container"></div>
 
       <div id="formContainer"></div>
-
-      <div id="catalogo" class="catalogo-container"></div>
 
       <div id="cartContainer"></div>
   </div>
