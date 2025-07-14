@@ -131,7 +131,7 @@ async function carregarCatalogo() {
     console.error("Elemento #catalogo não encontrado.");
     return;
   }
-  catalogoContainer.innerHTML = '<p>Carregando produtos...</p>';
+  catalogoContainer.innerHTML = '<div class="loader"></div>'; // Mostra o spinner
   try {
     const res = await fetch(`/produtos?_=${Date.now()}`);
     if (!res.ok) {
@@ -309,29 +309,55 @@ function criarFormulario() {
 }
 
 function exibirFormulario() {
+  // Esconde os outros containers
   catalogoContainer.style.display = 'none';
   cartContainer.style.display = 'none';
+
+  // Mostra o formulário
   formContainer.style.display = 'block';
   animateIn(formContainer);
 
+  // Adiciona os listeners do formulário AQUI para garantir que sempre funcionem
+  const deliveryTypeSelect = document.getElementById('deliveryTypeSelect');
+  const addressField = document.getElementById('addressField');
+  const paymentMethodSelect = document.getElementById('paymentMethodSelect');
+  const changeField = document.getElementById('changeField');
   const continueBtn = document.getElementById('continueBtn');
   const nameInput = document.getElementById('nameInput');
   const whatsappInput = document.getElementById('whatsappInput');
   const emailInput = document.getElementById('emailInput');
-  const deliveryTypeSelect = document.getElementById('deliveryTypeSelect');
   const addressInput = document.getElementById('addressInput');
-  const paymentMethodSelect = document.getElementById('paymentMethodSelect');
   const changeInput = document.getElementById('changeInput');
 
-  // Adiciona listeners de validação
-  nameInput.addEventListener('input', () => validateFullName(nameInput, document.getElementById('nameError')));
-  // ... (outros listeners de validação)
+  // Listener para mostrar/esconder campo de endereço
+  deliveryTypeSelect.onchange = () => {
+    addressField.style.display = deliveryTypeSelect.value === 'Tele-entrega' ? 'block' : 'none';
+  };
 
+  // Listener para mostrar/esconder campo de troco
+  paymentMethodSelect.onchange = () => {
+    changeField.style.display = paymentMethodSelect.value === 'Dinheiro' ? 'block' : 'none';
+  };
+
+  // Listener para o botão final de enviar
   continueBtn.onclick = () => {
+    // Validação completa
     const isNameValid = validateFullName(nameInput, document.getElementById('nameError'));
-    // ... (outras validações)
-    
-    if (isNameValid /* && outras validações */) {
+    const isWhatsappValid = validateWhatsapp(whatsappInput, document.getElementById('whatsappError'));
+    const isEmailValid = validateEmail(emailInput, document.getElementById('emailError'));
+    const isDeliveryTypeValid = validateField(deliveryTypeSelect, document.getElementById('deliveryTypeError'), deliveryTypeSelect.value !== '', 'Selecione o tipo de entrega.');
+    let isAddressValid = true;
+    if (deliveryTypeSelect.value === 'Tele-entrega') {
+      isAddressValid = validateField(addressInput, document.getElementById('addressError'), addressInput.value.trim() !== '', 'Endereço é obrigatório para Tele-entrega.');
+    }
+    const isPaymentMethodValid = validateField(paymentMethodSelect, document.getElementById('paymentMethodError'), paymentMethodSelect.value !== '', 'Selecione a forma de pagamento.');
+    let isChangeValid = true;
+    if (paymentMethodSelect.value === 'Dinheiro') {
+      isChangeValid = validateChange(changeInput, document.getElementById('changeError'));
+    }
+
+    if (isNameValid && isWhatsappValid && isEmailValid && isDeliveryTypeValid && isAddressValid && isPaymentMethodValid && isChangeValid) {
+      // Coleta os dados do cliente
       dadosCliente = {
         nomeCompleto: nameInput.value.trim(),
         whatsapp: whatsappInput.value.trim(),
@@ -342,6 +368,7 @@ function exibirFormulario() {
         trocoPara: changeInput.value.trim() ? parseFloat(changeInput.value) : null
       };
       
+      // Gera a mensagem e abre o WhatsApp
       const msg = gerarMensagemWhatsApp();
       window.open(`https://wa.me/${configLoja.whatsappnumber}?text=${encodeURIComponent(msg)}`, '_blank');
     } else {
@@ -356,31 +383,12 @@ function ativarCarrinho() {
   const total = itensCarrinho.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
   const itensHtml = itensCarrinho.map(item => `<li>${item.nome} x${item.quantidade} - R$ ${(item.preco * item.quantidade).toFixed(2)}</li>`).join('');
   
-  document.getElementById('cartItemCount').textContent = itensCarrinho.reduce((acc, item) => acc + item.quantidade, 0);
-
-  cartContainer.innerHTML = `
-    <h2><i class="fas fa-shopping-cart"></i> Meu Carrinho</h2>
-    ${itensCarrinho.length > 0 ? `<ul>${itensHtml}</ul>` : '<p>Seu carrinho está vazio.</p>'}
-    <p>Total: R$ ${total.toFixed(2)}</p>
-    ${itensCarrinho.length > 0 ? '<button id="btnFinalizarPedido"><i class="fas fa-money-check-alt"></i> Finalizar Pedido</button>' : ''}
-  `;
-
-  cartContainer.style.display = 'block';
-  animateIn(cartContainer);
-
-  const finalizarBtn = document.getElementById('btnFinalizarPedido');
-  if (finalizarBtn) {
-    finalizarBtn.addEventListener('click', exibirFormulario);
+  const itemCount = itensCarrinho.reduce((acc, item) => acc + item.quantidade, 0);
+  const cartItemCountEl = document.getElementById('cartItemCount');
+  if (cartItemCountEl) {
+    cartItemCountEl.textContent = itemCount;
+    cartItemCountEl.style.display = itemCount > 0 ? 'block' : 'none';
   }
-}
-
-function ativarCarrinho() {
-  if (!cartContainer) return;
-
-  const total = itensCarrinho.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
-  const itensHtml = itensCarrinho.map(item => `<li>${item.nome} x${item.quantidade} - R$ ${(item.preco * item.quantidade).toFixed(2)}</li>`).join('');
-  
-  document.getElementById('cartItemCount').textContent = itensCarrinho.reduce((acc, item) => acc + item.quantidade, 0);
 
   cartContainer.innerHTML = `
     <h2><i class="fas fa-shopping-cart"></i> Meu Carrinho</h2>
