@@ -12,9 +12,11 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Configuração do Cloudinary
-// As variáveis (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET)
-// são automaticamente reconhecidas pela biblioteca se estiverem no ambiente.
-cloudinary.config();
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 // Configuração do Pool de Conexões com PostgreSQL
 const pool = new Pool({
