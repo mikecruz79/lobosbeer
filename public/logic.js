@@ -52,8 +52,8 @@ async function loadPageData() {
 
 function updateStoreInfo() {
     document.getElementById('nome-loja').textContent = configLoja.nomeloja;
-    document.getElementById('endereco-loja').textContent = configLoja.enderecoloja;
-    document.getElementById('horario-funcionamento').textContent = configLoja.horariofuncionamento;
+    document.querySelector('#endereco-loja span').textContent = configLoja.enderecoloja;
+    document.querySelector('#horario-funcionamento span').textContent = configLoja.horariofuncionamento;
     document.getElementById('logo-img').src = configLoja.logourl || 'https://placehold.co/90x90';
     document.getElementById('capa-img').src = configLoja.capaurl || 'https://placehold.co/800x280';
 }

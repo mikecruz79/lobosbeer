@@ -106,18 +106,33 @@ body {
   font-size: 2.5em;
   margin: 0;
   letter-spacing: 0.5px;
-  /* Animação de entrada */
   opacity: 0;
   animation: slideUp 0.8s 0.8s ease-out forwards;
 }
 
-.header-overlay p {
+.header-overlay .header-info {
   font-size: 1.1em;
   margin: 0.3rem 0;
-  opacity: 0.9;
-  /* Animação de entrada */
   opacity: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#endereco-loja {
   animation: slideUp 0.8s 1s ease-out forwards;
+}
+
+#horario-funcionamento {
+  animation: slideUp 0.8s 1.2s ease-out forwards;
+}
+
+#horario-funcionamento .fa-clock {
+  animation: tick-tock 2s infinite ease-in-out;
+}
+
+#endereco-loja .fa-map-marker-alt {
+  animation: pulse-gps 2.5s infinite;
 }
 
 /* Keyframes para as animações de entrada */
@@ -127,24 +142,33 @@ body {
 }
 
 @keyframes zoomIn {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tick-tock {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  75% { transform: rotate(-10deg); }
+}
+
+@keyframes pulse-gps {
+  0% {
+    transform: scale(1);
+    text-shadow: 0 0 5px rgba(255,255,255,0.3);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  50% {
+    transform: scale(1.1);
+    text-shadow: 0 0 15px rgba(255,255,255,0.8);
+  }
+  100% {
+    transform: scale(1);
+    text-shadow: 0 0 5px rgba(255,255,255,0.3);
   }
 }
 
@@ -155,9 +179,8 @@ body {
   font-size: 1.8em;
   color: white;
   z-index: 3;
-  /* Animação de entrada */
   opacity: 0;
-  animation: fadeIn 1s 1.2s ease-in-out forwards;
+  animation: fadeIn 1s 1.4s ease-in-out forwards;
 }
 
 #cartItemCount {
@@ -428,6 +451,19 @@ button {
 .swiper-container {
   width: 100%;
   padding: 10px 0;
+}
+
+/* Esconde as setas por padrão */
+.swiper-button-next,
+.swiper-button-prev {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Mostra as setas quando o mouse está sobre a seção da categoria */
+.category-section:hover .swiper-button-next,
+.category-section:hover .swiper-button-prev {
+  opacity: 1;
 }
 
 .swiper-slide {

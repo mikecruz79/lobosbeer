@@ -22,8 +22,8 @@
           </div>
           <img id="logo-img" src="" alt="Logo da Loja" class="logo-img" loading="lazy">
           <h1 id="nome-loja"></h1>
-          <p id="endereco-loja"></p>
-          <p id="horario-funcionamento"></p>
+          <p id="endereco-loja" class="header-info"><i class="fas fa-map-marker-alt"></i> <span></span></p>
+          <p id="horario-funcionamento" class="header-info"><i class="fas fa-clock"></i> <span></span></p>
       </div>
   </header>
 
@@ -32,10 +32,10 @@
   </nav>
 
   <div class="container">
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="🔎 Procurar por um produto...">
+    </div>
     <main class="main-content">
-      <div class="search-container">
-        <input type="text" id="searchInput" placeholder="🔎 Procurar por um produto...">
-      </div>
       <div id="catalogo" class="catalogo-container"></div>
       <div id="formContainer"></div>
       <div id="cartContainer"></div>
