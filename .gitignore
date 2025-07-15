@@ -3,3 +3,6 @@ node_modules/
 
 # Ignorar arquivos de análise de projeto local
 lobosbeer_project_analysis.md
+
+# Ignorar diretriz de desenvolvimento pessoal
+JAMAIS-SUPOSICAO.md

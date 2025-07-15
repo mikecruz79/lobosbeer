@@ -227,12 +227,20 @@ app.post('/config', async (req, res) => {
         }
         const currentConfig = currentConfigResult.rows[0];
 
-        // 2. Mesclar os dados: use o novo valor se ele não for vazio/nulo, senão mantenha o antigo
+        // 2. Processar e formatar os dados recebidos
+        let whatsappNumberToSave = newConfigData.whatsappnumber || currentConfig.whatsappnumber;
+        // Limpa o número para garantir que tenha apenas dígitos
+        whatsappNumberToSave = whatsappNumberToSave.replace(/\D/g, '');
+        // Adiciona o código do país (55) se não estiver presente
+        if (whatsappNumberToSave && !whatsappNumberToSave.startsWith('55')) {
+            whatsappNumberToSave = '55' + whatsappNumberToSave;
+        }
+
         const finalConfig = {
             nomeloja: newConfigData.nomeloja || currentConfig.nomeloja,
             enderecoloja: newConfigData.enderecoloja || currentConfig.enderecoloja,
             horariofuncionamento: newConfigData.horariofuncionamento || currentConfig.horariofuncionamento,
-            whatsappnumber: newConfigData.whatsappnumber || currentConfig.whatsappnumber,
+            whatsappnumber: whatsappNumberToSave,
             logourl: newConfigData.logourl !== undefined ? newConfigData.logourl : currentConfig.logourl,
             capaurl: newConfigData.capaurl !== undefined ? newConfigData.capaurl : currentConfig.capaurl
         };

@@ -27,9 +27,12 @@
                     <input type="text" id="horarioFuncionamento" required>
                 </div>
                  <div class="form-group">
-                    <label for="whatsappNumberConfig">WhatsApp (com DDD, só números):</label>
-                    <input type="text" id="whatsappNumberConfig" required inputmode="numeric" pattern="[0-9]*" minlength="11" maxlength="13">
-                     <p class="error-message-field" id="whatsappConfigError"></p>
+                    <label for="whatsappNumberConfig">WhatsApp da Loja:</label>
+                    <input type="text" id="whatsappNumberConfig" required inputmode="numeric" pattern="[0-9]*" maxlength="11" disabled>
+                    <button type="button" id="editWhatsappBtn">Alterar</button>
+                    <button type="button" id="cancelEditWhatsappBtn" style="display:none;">Cancelar</button>
+                    <p class="info-message">Digite o DDD + Número (11 dígitos). Ex: 11987654321</p>
+                    <p class="error-message-field" id="whatsappConfigError"></p>
                 </div>
                 <div class="form-group">
                     <label for="logoUrl">URL da Logo:</label>
