@@ -68,9 +68,6 @@ function validatePrice(inputElement, errorElement) {
 
 // --- Funções de Produtos e Categorias ---
 
-/**
- * Carrega produtos e configurações, depois renderiza a lista de produtos.
- */
 async function loadProductsAndConfig() {
     try {
         const [productsRes, configRes] = await Promise.all([
@@ -85,10 +82,8 @@ async function loadProductsAndConfig() {
         const products = await productsRes.json();
         const config = await configRes.json();
 
-        // Armazena a ordem de categorias vinda do backend
         categoryOrder = config.ordem_categorias ? JSON.parse(config.ordem_categorias) : [];
 
-        // Agrupa produtos por categoria
         productsByCategory = products.reduce((acc, product) => {
             const category = product.categoria || 'Sem Categoria';
             if (!acc[category]) acc[category] = [];
@@ -105,23 +100,17 @@ async function loadProductsAndConfig() {
     }
 }
 
-/**
- * Renderiza a lista de produtos no formato accordion, respeitando a ordem.
- */
 function renderProductList() {
     productListContainer.innerHTML = '';
 
-    // Garante que todas as categorias existentes estejam na lista de ordenação
     const allCategories = Object.keys(productsByCategory);
     allCategories.forEach(cat => {
         if (!categoryOrder.includes(cat)) {
             categoryOrder.push(cat);
         }
     });
-    // Remove categorias da ordenação que não existem mais
     categoryOrder = categoryOrder.filter(cat => allCategories.includes(cat));
 
-    // Renderiza na ordem definida
     categoryOrder.forEach(category => {
         const categoryProducts = productsByCategory[category];
         if (!categoryProducts) return;
@@ -154,6 +143,7 @@ function renderProductList() {
                                 <td data-label="Ativo"><input type="checkbox" ${product.ativo ? 'checked' : ''} data-field="ativo"></td>
                                 <td data-label="Ações">
                                     <button class="save-btn">Salvar</button>
+                                    <button class="move-btn">Mover</button>
                                     <button class="delete-btn">Excluir</button>
                                 </td>
                             </tr>
@@ -163,6 +153,15 @@ function renderProductList() {
             </div>
         `;
         productListContainer.appendChild(categoryElement);
+    });
+
+    // Popula o datalist de sugestões de categoria
+    const categorySuggestions = document.getElementById('category-suggestions');
+    categorySuggestions.innerHTML = '';
+    allCategories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        categorySuggestions.appendChild(option);
     });
 
     addAccordionListeners();
@@ -183,6 +182,7 @@ function addAccordionListeners() {
 
 function addDynamicButtonListeners() {
     document.querySelectorAll('.save-btn').forEach(btn => btn.addEventListener('click', saveProduct));
+    document.querySelectorAll('.move-btn').forEach(btn => btn.addEventListener('click', moveProduct));
     document.querySelectorAll('.upload-single-image-btn').forEach(btn => btn.addEventListener('click', handleSingleImageUpload));
     document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', deleteProduct));
 }
@@ -215,8 +215,8 @@ async function saveCategoryOrder() {
 
         alert('Ordem das categorias salva com sucesso!');
         orderModal.style.display = 'none';
-        categoryOrder = newOrder; // Atualiza a ordem localmente
-        renderProductList(); // Re-renderiza a lista na nova ordem
+        categoryOrder = newOrder;
+        renderProductList();
     } catch (error) {
         console.error('Erro ao salvar ordem:', error);
         alert('Erro ao salvar a ordem das categorias.');
@@ -229,8 +229,43 @@ cancelOrderBtn.addEventListener('click', () => orderModal.style.display = 'none'
 saveOrderBtn.addEventListener('click', saveCategoryOrder);
 
 
-// --- Funções de Ações de Produto (Salvar, Deletar, Upload) ---
-// (O código para saveProduct, deleteProduct, handleSingleImageUpload, etc. permanece o mesmo)
+// --- Funções de Ações de Produto ---
+
+async function moveProduct(event) {
+    const row = event.target.closest('tr');
+    const productId = row.dataset.id;
+    const productName = row.querySelector('input[data-field="nome"]').value;
+    const currentCategory = row.closest('.category-accordion').querySelector('.category-header span:first-child').textContent;
+
+    const availableCategories = categoryOrder.filter(c => c !== currentCategory);
+    if (availableCategories.length === 0) {
+        alert("Não há outras categorias para mover o produto.");
+        return;
+    }
+
+    const newCategory = prompt(`Para qual categoria você deseja mover "${productName}"?\n\nCategorias disponíveis:\n- ${availableCategories.join('\n- ')}`);
+
+    if (newCategory && categoryOrder.includes(newCategory)) {
+        try {
+            const response = await fetch(`/produtos/${productId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ categoria: newCategory }) // Envia apenas a categoria para atualizar
+            });
+
+            if (!response.ok) throw new Error(await response.text());
+
+            alert(`Produto "${productName}" movido para a categoria "${newCategory}" com sucesso!`);
+            loadProductsAndConfig(); // Recarrega tudo para refletir a mudança
+        } catch (error) {
+            console.error('Erro ao mover produto:', error);
+            alert('Erro ao mover o produto.');
+        }
+    } else if (newCategory) {
+        alert(`Categoria "${newCategory}" inválida. Por favor, escolha uma da lista.`);
+    }
+}
+
 async function saveProduct(event) {
     const row = event.target.closest('tr');
     const productId = row.dataset.id;
@@ -394,7 +429,6 @@ addProductForm.addEventListener('submit', async function(event) {
 
 
 // --- Funções de Configurações ---
-// (O código para loadConfig, o submit do configForm e os listeners de UI permanecem os mesmos)
 async function loadConfig() {
     try {
         const response = await fetch('/config');

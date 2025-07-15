@@ -125,9 +125,19 @@ app.get('/produtos', async (req, res) => {
     }
 });
 
+// Função para padronizar nomes de categoria
+function standardizeCategory(name) {
+    if (!name || typeof name !== 'string') return 'Sem Categoria';
+    const trimmed = name.trim();
+    if (trimmed.length === 0) return 'Sem Categoria';
+    return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+}
+
 // Rota POST para adicionar um NOVO produto
 app.post('/produtos', async (req, res) => {
-    const { nome, preco, imagem_url, ativo, categoria } = req.body;
+    const { nome, preco, imagem_url, ativo } = req.body;
+    const categoria = standardizeCategory(req.body.categoria); // Padroniza a categoria
+
     if (!nome || typeof preco !== 'number' || typeof ativo !== 'boolean') {
         return res.status(400).json({ error: 'Dados do novo produto inválidos.' });
     }
@@ -145,15 +155,31 @@ app.post('/produtos', async (req, res) => {
 
 // Rota PUT para atualizar um produto existente
 app.put('/produtos/:id', async (req, res) => {
-    const { nome, preco, imagem_url, ativo, categoria } = req.body;
-    if (!nome || typeof preco !== 'number' || typeof ativo !== 'boolean') {
-        return res.status(400).json({ error: 'Dados do produto atualizado inválidos.' });
+    const { nome, preco, imagem_url, ativo } = req.body;
+    // A categoria só é padronizada se for enviada na requisição
+    const categoria = req.body.categoria ? standardizeCategory(req.body.categoria) : undefined;
+
+    // Constrói a query dinamicamente para atualizar apenas os campos fornecidos
+    const fields = [];
+    const values = [];
+    let paramCount = 1;
+
+    if (nome !== undefined) { fields.push(`nome = ${paramCount++}`); values.push(nome); }
+    if (preco !== undefined) { fields.push(`preco = ${paramCount++}`); values.push(preco); }
+    if (imagem_url !== undefined) { fields.push(`imagem_url = ${paramCount++}`); values.push(imagem_url); }
+    if (ativo !== undefined) { fields.push(`ativo = ${paramCount++}`); values.push(ativo); }
+    if (categoria !== undefined) { fields.push(`categoria = ${paramCount++}`); values.push(categoria); }
+
+    if (fields.length === 0) {
+        return res.status(400).json({ error: 'Nenhum campo para atualizar fornecido.' });
     }
+
+    values.push(req.params.id); // Adiciona o ID do produto como último parâmetro
+
+    const query = `UPDATE products SET ${fields.join(', ')} WHERE id = ${paramCount} RETURNING *`;
+
     try {
-        const result = await pool.query(
-            'UPDATE products SET nome = $1, preco = $2, imagem_url = $3, ativo = $4, categoria = $5 WHERE id = $6 RETURNING *',
-            [nome, preco, imagem_url, ativo, categoria, req.params.id]
-        );
+        const result = await pool.query(query, values);
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Produto não encontrado.' });
         }
