@@ -111,16 +111,25 @@ function showInfo(searchTerm = '') {
 function setupStickyNav() {
     const categories = Array.from(document.querySelectorAll('.category-title'));
     if (categories.length === 0) return;
-    stickyNav.innerHTML = categories.map(cat => `<a href="#${cat.id}">${cat.textContent}</a>`).join('');
-    stickyNav.querySelectorAll('a').forEach(anchor => {
+
+    const linksContainer = stickyNav.querySelector('.nav-links-container');
+    linksContainer.innerHTML = categories.map(cat => `<a href="#${cat.id}">${cat.textContent}</a>`).join('');
+
+    linksContainer.querySelectorAll('a').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
         });
     });
+
     window.addEventListener('scroll', () => {
-        if (window.scrollY > siteHeader.offsetHeight) stickyNav.classList.add('visible');
-        else stickyNav.classList.remove('visible');
+        if (window.scrollY > siteHeader.offsetHeight) {
+            stickyNav.classList.add('visible');
+        } else {
+            stickyNav.classList.remove('visible');
+        }
     });
 }
 
