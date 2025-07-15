@@ -268,6 +268,8 @@ async function moveProduct(event) {
 
 async function saveProduct(event) {
     const row = event.target.closest('tr');
+    if (!row) return; // Adiciona uma verificação de segurança
+
     const productId = row.dataset.id;
     const nameInput = row.querySelector('input[data-field="nome"]');
     const priceInput = row.querySelector('input[data-field="preco"]');
@@ -282,14 +284,10 @@ async function saveProduct(event) {
         return;
     }
 
-    const categoryHeader = row.closest('.category-accordion').querySelector('.category-header span:first-child');
-    const category = categoryHeader.textContent;
-
-    const updatedProduct = {
-        id: productId,
+    // Envia apenas os campos que foram editados nesta linha
+    const updatedProductData = {
         nome: nameInput.value.trim(),
         preco: parseFloat(priceInput.value),
-        categoria: category,
         imagem_url: imageUrlInput.value.trim(),
         ativo: activeInput.checked
     };
@@ -298,12 +296,12 @@ async function saveProduct(event) {
         const saveResponse = await fetch(`/produtos/${productId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedProduct)
+            body: JSON.stringify(updatedProductData)
         });
         if (saveResponse.ok) {
             alert('Produto salvo com sucesso!');
             const imgElement = row.querySelector('.image-cell img');
-            if (imgElement) imgElement.src = updatedProduct.imagem_url || 'https://placehold.co/50x50';
+            if (imgElement) imgElement.src = updatedProductData.imagem_url || 'https://placehold.co/50x50';
         } else {
              throw new Error(await saveResponse.text());
         }
