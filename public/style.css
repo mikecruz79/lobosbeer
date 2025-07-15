@@ -414,6 +414,25 @@ button {
   font-size: 1.05em;
 }
 
+#cartContainer li .item-info {
+    flex-grow: 1;
+}
+
+#cartContainer li .remove-item-btn {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 10px;
+    transition: transform 0.2s ease;
+}
+
+#cartContainer li .remove-item-btn:hover {
+    transform: scale(1.2);
+}
+
 #cartContainer li:last-child {
   border-bottom: none;
 }
@@ -450,6 +469,31 @@ button {
 #btnFinalizarPedido:hover {
   background-color: #27ae60;
   transform: translateY(-2px);
+}
+
+/* Toast Notification */
+.toast-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--text-color-dark);
+    color: var(--text-color-light);
+    padding: 12px 20px;
+    border-radius: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    z-index: 1000;
+    font-size: 1em;
+    font-weight: 500;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+}
+
+.toast-notification.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -20px);
 }
 
 /* Responsividade (Mobile First com breakpoint para tablets/desktops) */
