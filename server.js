@@ -86,16 +86,21 @@ async function createTables() {
 // Função para migrar o banco de dados
 async function migrateDatabase() {
     try {
-        const res = await pool.query(`
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name='products' AND column_name='categoria'
-        `);
+        // Adiciona a coluna 'categoria' em 'products' se não existir
+        let res = await pool.query("SELECT column_name FROM information_schema.columns WHERE table_name='products' AND column_name='categoria'");
         if (res.rows.length === 0) {
-            console.log('Migrando banco de dados: Adicionando coluna "categoria" na tabela "products".');
+            console.log('Migrando Tabela Products: Adicionando coluna "categoria".');
             await pool.query('ALTER TABLE products ADD COLUMN categoria TEXT');
-            console.log('Migração concluída com sucesso.');
         }
+
+        // Adiciona a coluna 'ordem_categorias' em 'configurations' se não existir
+        res = await pool.query("SELECT column_name FROM information_schema.columns WHERE table_name='configurations' AND column_name='ordem_categorias'");
+        if (res.rows.length === 0) {
+            console.log('Migrando Tabela Configurations: Adicionando coluna "ordem_categorias".');
+            await pool.query('ALTER TABLE configurations ADD COLUMN ordem_categorias TEXT');
+        }
+        console.log('Migração do banco de dados concluída.');
+
     } catch (err) {
         console.error('Erro durante a migração do banco de dados:', err.stack);
     }
@@ -199,20 +204,26 @@ app.post('/config', async (req, res) => {
             whatsappNumberToSave = '55' + whatsappNumberToSave;
         }
 
+        // Prepara a ordem das categorias para ser salva como string JSON
+        const ordemCategoriasToSave = newConfigData.ordem_categorias 
+            ? JSON.stringify(newConfigData.ordem_categorias) 
+            : currentConfig.ordem_categorias;
+
         const finalConfig = {
             nomeloja: newConfigData.nomeloja || currentConfig.nomeloja,
             enderecoloja: newConfigData.enderecoloja || currentConfig.enderecoloja,
             horariofuncionamento: newConfigData.horariofuncionamento || currentConfig.horariofuncionamento,
             whatsappnumber: whatsappNumberToSave,
             logourl: newConfigData.logourl !== undefined ? newConfigData.logourl : currentConfig.logourl,
-            capaurl: newConfigData.capaurl !== undefined ? newConfigData.capaurl : currentConfig.capaurl
+            capaurl: newConfigData.capaurl !== undefined ? newConfigData.capaurl : currentConfig.capaurl,
+            ordem_categorias: ordemCategoriasToSave
         };
 
         await pool.query(`
             UPDATE configurations
-            SET nomeloja = $1, enderecoloja = $2, horariofuncionamento = $3, whatsappnumber = $4, logourl = $5, capaurl = $6
+            SET nomeloja = $1, enderecoloja = $2, horariofuncionamento = $3, whatsappnumber = $4, logourl = $5, capaurl = $6, ordem_categorias = $7
             WHERE id = 1;
-        `, [finalConfig.nomeloja, finalConfig.enderecoloja, finalConfig.horariofuncionamento, finalConfig.whatsappnumber, finalConfig.logourl, finalConfig.capaurl]);
+        `, [finalConfig.nomeloja, finalConfig.enderecoloja, finalConfig.horariofuncionamento, finalConfig.whatsappnumber, finalConfig.logourl, finalConfig.capaurl, finalConfig.ordem_categorias]);
 
         res.status(200).json({ message: 'Configurações salvas com sucesso!' });
     } catch (error) {

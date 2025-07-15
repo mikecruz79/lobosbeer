@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo</title>
     <link rel="stylesheet" href="admin.css">
+    <!-- Adiciona a biblioteca SortableJS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -54,24 +56,13 @@
 
 
         <div class="products-section">
-            <h3>Gerenciar Produtos</h3>
+            <h3>
+                Gerenciar Produtos
+                <button id="openOrderModalBtn" class="order-btn">Ordenar Categorias</button>
+            </h3>
 
             <div id="productList">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Preço</th>
-                            <th>Categoria</th>
-                            <th>Imagem</th>
-                            <th>Ativo</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
+                <!-- O conteúdo será gerado dinamicamente pelo admin.js -->
             </div>
 
             <h3>Adicionar Novo Produto</h3>
@@ -103,6 +94,21 @@
                 </div>
                 <button type="submit">Adicionar Produto</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal para Ordenar Categorias -->
+    <div id="orderModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <h4>Ordenar Categorias</h4>
+            <p>Arraste e solte para reordenar como elas aparecem na loja.</p>
+            <ul id="sortableCategoryList" class="sortable-list">
+                <!-- Itens da lista serão gerados pelo admin.js -->
+            </ul>
+            <div class="modal-actions">
+                <button id="saveOrderBtn" class="save-btn">Salvar Ordem</button>
+                <button id="cancelOrderBtn" class="delete-btn">Cancelar</button>
+            </div>
         </div>
     </div>
 
