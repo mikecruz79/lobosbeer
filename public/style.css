@@ -41,7 +41,7 @@ body {
 /* Cabeçalho do Site (Header) */
 .site-header {
   width: 100%;
-  height: 280px; /* Um pouco mais de altura para impacto visual */
+  height: 280px;
   position: relative;
   overflow: hidden;
   margin-bottom: var(--spacing-lg);
@@ -59,11 +59,12 @@ body {
   top: 0;
   left: 0;
   z-index: 1;
-  filter: brightness(0.7); /* Escurece a imagem para melhor contraste do texto */
+  /* Removemos o filtro de brilho para usar o gradiente */
+  animation: fadeIn 1s ease-in-out; /* Animação de entrada */
 }
 
 .header-overlay {
-  position: relative; /* Mudado para relative para posicionar sobre a imagem e z-index */
+  position: relative;
   color: var(--text-color-light);
   display: flex;
   flex-direction: column;
@@ -71,34 +72,80 @@ body {
   justify-content: center;
   z-index: 2;
   padding: var(--spacing-md);
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4); /* Sombra para o texto */
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5); /* Sombra de texto mais forte */
+  width: 100%;
+  height: 100%;
+  /* O gradiente garante a legibilidade do texto sobre qualquer imagem */
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
 }
 
 .logo-img {
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  border: 4px solid var(--text-color-light); /* Borda mais grossa */
+  border: 4px solid var(--text-color-light);
   margin-bottom: var(--spacing-sm);
   object-fit: cover;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); /* Sombra na logo */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
   transition: transform 0.3s ease;
+  /* Animação de entrada */
+  opacity: 0;
+  animation: zoomIn 0.8s 0.5s ease-out forwards;
 }
 
 .logo-img:hover {
-    transform: scale(1.05); /* Efeito ao passar o mouse */
+    transform: scale(1.05);
 }
 
 .header-overlay h1 {
-  font-size: 2.5em; /* Tamanho maior para o nome da loja */
+  font-size: 2.5em;
   margin: 0;
   letter-spacing: 0.5px;
+  /* Animação de entrada */
+  opacity: 0;
+  animation: slideUp 0.8s 0.8s ease-out forwards;
 }
 
 .header-overlay p {
   font-size: 1.1em;
   margin: 0.3rem 0;
   opacity: 0.9;
+  /* Animação de entrada */
+  opacity: 0;
+  animation: slideUp 0.8s 1s ease-out forwards;
+}
+
+/* Keyframes para as animações de entrada */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 #cartIconContainer {
@@ -108,6 +155,9 @@ body {
   font-size: 1.8em;
   color: white;
   z-index: 3;
+  /* Animação de entrada */
+  opacity: 0;
+  animation: fadeIn 1s 1.2s ease-in-out forwards;
 }
 
 #cartItemCount {
@@ -295,6 +345,64 @@ button {
   background-color: #2980b9;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Navegação Fixa (Sticky Nav) */
+.sticky-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 999;
+  padding: 0.5rem 1rem;
+  transform: translateY(-100%);
+  transition: transform 0.4s ease-in-out;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.sticky-nav.visible {
+  transform: translateY(0);
+}
+
+.sticky-nav a {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  color: var(--text-color-dark);
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sticky-nav a:hover {
+  background-color: var(--primary-color);
+  color: var(--text-color-light);
+}
+
+/* Barra de Busca */
+.search-container {
+  width: 100%;
+  margin-bottom: var(--spacing-lg);
+}
+
+#searchInput {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 1.1em;
+  border: 1px solid var(--border-color);
+  border-radius: 30px; /* Bordas arredondadas para um visual moderno */
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#searchInput:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
 /* Catálogo de Produtos */
@@ -495,6 +603,52 @@ button {
     visibility: visible;
     transform: translate(-50%, -20px);
 }
+
+/* Modal de Imagem */
+.image-modal {
+  display: none;
+  position: fixed;
+  z-index: 1001; /* Acima do sticky-nav */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.85);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.image-modal-content {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  animation: zoomInModal 0.3s ease-out;
+}
+
+.close-image-modal {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.close-image-modal:hover,
+.close-image-modal:focus {
+  color: #bbb;
+  text-decoration: none;
+}
+
+@keyframes zoomInModal {
+  from {transform: scale(0.8)}
+  to {transform: scale(1)}
+}
+
 
 /* Responsividade (Mobile First com breakpoint para tablets/desktops) */
 @media (min-width: 600px) {

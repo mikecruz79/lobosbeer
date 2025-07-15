@@ -27,7 +27,14 @@
       </div>
   </header>
 
+  <nav id="sticky-nav" class="sticky-nav">
+    <!-- Links das categorias serão inseridos aqui pelo logic.js -->
+  </nav>
+
   <div class="container">
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="🔎 Procurar por um produto...">
+      </div>
       <div id="catalogo" class="catalogo-container"></div>
       <div id="formContainer"></div>
       <div id="cartContainer"></div>
@@ -44,6 +51,12 @@
       <p class="footer-dev-note">Desenvolvido com ❤️</p>
     </div>
   </footer>
+
+  <!-- Modal para Visualização Rápida da Imagem -->
+  <div id="imageModal" class="image-modal">
+    <span class="close-image-modal">&times;</span>
+    <img class="image-modal-content" id="modalImage">
+  </div>
 
   <!-- Load scripts with defer to prevent render-blocking -->
   <script src="https://unpkg.com/swiper/swiper-bundle.min.js" defer></script>
