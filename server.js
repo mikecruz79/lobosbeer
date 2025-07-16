@@ -175,18 +175,18 @@ app.put('/produtos/:id', async (req, res) => {
     const values = [];
     let paramCount = 1;
 
-    if (nome !== undefined) { fields.push(`nome = ${paramCount++}`); values.push(nome); }
-    if (preco !== undefined) { fields.push(`preco = ${paramCount++}`); values.push(preco); }
-    if (imagem_url !== undefined) { fields.push(`imagem_url = ${paramCount++}`); values.push(imagem_url); }
-    if (ativo !== undefined) { fields.push(`ativo = ${paramCount++}`); values.push(ativo); }
-    if (categoria !== undefined) { fields.push(`categoria = ${paramCount++}`); values.push(categoria); }
+    if (nome !== undefined) { fields.push(`nome = $${paramCount++}`); values.push(nome); }
+    if (preco !== undefined) { fields.push(`preco = $${paramCount++}`); values.push(preco); }
+    if (imagem_url !== undefined) { fields.push(`imagem_url = $${paramCount++}`); values.push(imagem_url); }
+    if (ativo !== undefined) { fields.push(`ativo = $${paramCount++}`); values.push(ativo); }
+    if (categoria !== undefined) { fields.push(`categoria = $${paramCount++}`); values.push(categoria); }
 
     if (fields.length === 0) {
         return res.status(400).json({ error: 'Nenhum campo para atualizar fornecido.' });
     }
 
     values.push(req.params.id);
-    const query = `UPDATE products SET ${fields.join(', ')} WHERE id = ${paramCount} RETURNING *`;
+    const query = `UPDATE products SET ${fields.join(', ')} WHERE id = $${paramCount} RETURNING *`;
 
     try {
         const result = await pool.query(query, values);
@@ -306,4 +306,9 @@ process.on('SIGINT', async () => {
     await pool.end();
     console.log('Pool de conexões fechado.');
     process.exit(0);
+});
+
+// Rota para servir o admin.html
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
