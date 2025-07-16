@@ -136,9 +136,15 @@ function setupScrollListeners() {
     window.addEventListener('scroll', () => {
         // Lógica para a barra de navegação fixa
         if (storeInfoContainer && window.scrollY > storeInfoContainer.offsetTop) {
-            stickyNav.classList.add('visible');
+            if (!stickyNav.classList.contains('visible')) {
+                stickyNav.classList.add('visible');
+                document.body.style.paddingTop = `${stickyNav.offsetHeight}px`;
+            }
         } else {
-            stickyNav.classList.remove('visible');
+            if (stickyNav.classList.contains('visible')) {
+                stickyNav.classList.remove('visible');
+                document.body.style.paddingTop = `0px`;
+            }
         }
 
         // Lógica para o botão de voltar ao topo

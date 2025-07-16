@@ -525,3 +525,55 @@ document.getElementById('whatsappNumberConfig').addEventListener('input', () => 
 document.getElementById('uploadNewImageBtn').addEventListener('click', () => {
     document.getElementById('newProductImageFile').click();
 });
+
+document.getElementById('uploadLogoBtn').addEventListener('click', () => {
+    document.getElementById('logoUpload').click();
+});
+
+document.getElementById('uploadCapaBtn').addEventListener('click', () => {
+    document.getElementById('capaUpload').click();
+});
+
+document.getElementById('logoUpload').addEventListener('change', () => {
+    handleConfigImageUpload(document.getElementById('logoUpload'), document.getElementById('logoUrl'));
+});
+
+document.getElementById('capaUpload').addEventListener('change', () => {
+    handleConfigImageUpload(document.getElementById('capaUpload'), document.getElementById('capaUrl'));
+});
+
+
+async function handleConfigImageUpload(fileInput, urlInput) {
+    if (fileInput.files.length === 0) {
+        alert('Por favor, selecione um arquivo de imagem.');
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('image', file);
+
+    // Adiciona um feedback visual de "carregando"
+    const originalButtonText = fileInput.previousElementSibling.textContent;
+    fileInput.previousElementSibling.textContent = 'Enviando...';
+    fileInput.previousElementSibling.disabled = true;
+
+    try {
+        const response = await fetch('/upload-imagem', { method: 'POST', body: formData });
+        if (response.ok) {
+            const result = await response.json();
+            urlInput.value = result.link;
+            alert('Upload de imagem bem-sucedido!');
+        } else {
+             throw new Error(await response.text());
+        }
+    } catch (error) {
+        console.error('Erro no upload da imagem:', error);
+        alert('Erro no upload da imagem.');
+    } finally {
+        // Restaura o botão
+        fileInput.previousElementSibling.textContent = originalButtonText;
+        fileInput.previousElementSibling.disabled = false;
+        fileInput.value = ''; // Limpa o input de arquivo
+    }
+}
