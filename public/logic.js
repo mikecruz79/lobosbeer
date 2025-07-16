@@ -133,18 +133,14 @@ function setupButtonListeners() {
 }
 
 function setupScrollListeners() {
+    const scrollThreshold = startOrderBtn ? startOrderBtn.offsetTop : 300;
+
     window.addEventListener('scroll', () => {
         // Lógica para a barra de navegação fixa
-        if (storeInfoContainer && window.scrollY > storeInfoContainer.offsetTop) {
-            if (!stickyNav.classList.contains('visible')) {
-                stickyNav.classList.add('visible');
-                document.body.style.paddingTop = `${stickyNav.offsetHeight}px`;
-            }
+        if (window.scrollY > scrollThreshold) {
+            stickyNav.classList.add('visible');
         } else {
-            if (stickyNav.classList.contains('visible')) {
-                stickyNav.classList.remove('visible');
-                document.body.style.paddingTop = `0px`;
-            }
+            stickyNav.classList.remove('visible');
         }
 
         // Lógica para o botão de voltar ao topo

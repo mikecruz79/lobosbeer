@@ -168,11 +168,9 @@ app.post('/produtos', async (req, res) => {
 
 // Rota PUT para atualizar um produto existente
 app.put('/produtos/:id', async (req, res) => {
-    const { nome, preco, imagem_url, ativo } = req.body;
-    // A categoria só é padronizada se for enviada na requisição
-    const categoria = req.body.categoria ? standardizeCategory(req.body.categoria) : undefined;
+    const { nome, preco, imagem_url, ativo, categoria: rawCategoria } = req.body;
+    const categoria = rawCategoria ? standardizeCategory(rawCategoria) : undefined;
 
-    // Constrói a query dinamicamente para atualizar apenas os campos fornecidos
     const fields = [];
     const values = [];
     let paramCount = 1;
@@ -187,8 +185,7 @@ app.put('/produtos/:id', async (req, res) => {
         return res.status(400).json({ error: 'Nenhum campo para atualizar fornecido.' });
     }
 
-    values.push(req.params.id); // Adiciona o ID do produto como último parâmetro
-
+    values.push(req.params.id);
     const query = `UPDATE products SET ${fields.join(', ')} WHERE id = ${paramCount} RETURNING *`;
 
     try {
