@@ -3,31 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Consider adding a <meta name="description"> for SEO and sharing -->
   <title>Delivery do Daniel</title>
-  <!-- Preconnect to improve font/icon loading performance -->
-  <link rel="preconnect" href="https://unpkg.com">
+  <!-- Google Fonts: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Libraries -->
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <!-- Main Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="site-header">
-      <!-- Consider lazy-loading large header images with loading="lazy" -->
       <img id="capa-img" src="" alt="Imagem de Capa do Delivery" class="capa-img" loading="lazy">
       <div class="header-overlay">
           <div id="cartIconContainer" role="region" aria-live="polite">
             <i id="cartIcon" class="fas fa-shopping-cart" aria-hidden="true"></i>
             <span id="cartItemCount" aria-label="Itens no carrinho">0</span>
           </div>
-          <img id="logo-img" src="" alt="Logo da Loja" class="logo-img" loading="lazy">
-          <div class="header-text-box">
-            <h1 id="nome-loja"></h1>
-            <p id="endereco-loja" class="header-info"><i class="fas fa-map-marker-alt"></i> <span></span></p>
-            <p id="horario-funcionamento" class="header-info"><i class="fas fa-clock"></i> <span></span></p>
-          </div>
       </div>
   </header>
+
+  <div class="store-info-container">
+    <img id="logo-img" src="" alt="Logo da Loja" class="logo-img" loading="lazy">
+    <div class="store-details">
+      <h1 id="nome-loja"></h1>
+      <p id="endereco-loja" class="header-info"><i class="fas fa-map-marker-alt"></i> <span></span></p>
+      <p id="horario-funcionamento" class="header-info"><i class="fas fa-clock"></i> <span></span></p>
+    </div>
+  </div>
 
   <button id="startOrderBtn">Ver Cardápio</button>
 

@@ -1,4 +1,4 @@
-// scripts/logic.js
+// scripts/logic.js - Modern "Clean & Focused" Redesign
 
 // --- Variáveis Globais ---
 let dadosCliente = {};
@@ -11,7 +11,7 @@ const catalogoContainer = document.getElementById("catalogo");
 const formContainer = document.getElementById("formContainer");
 const cartContainer = document.getElementById("cartContainer");
 const stickyNav = document.getElementById("sticky-nav");
-const siteHeader = document.querySelector(".site-header");
+const storeInfoContainer = document.querySelector(".store-info-container");
 const startOrderBtn = document.getElementById("startOrderBtn");
 const backToTopBtn = document.getElementById("backToTopBtn");
 
@@ -46,9 +46,12 @@ async function loadPageData() {
         showInfo();
         setupStickyNav();
         
-        // Anima a entrada dos elementos principais
-        animateIn(startOrderBtn);
-        animateIn(catalogoContainer);
+        // Adiciona a classe 'visible' para iniciar a animação de fade-in do CSS
+        document.querySelectorAll('.fade-in').forEach(el => {
+            // Força um reflow para garantir que a transição aconteça
+            el.offsetHeight; 
+            el.classList.add('visible');
+        });
 
         document.getElementById('searchInput').addEventListener('input', (e) => showInfo(e.target.value));
 
@@ -58,11 +61,12 @@ async function loadPageData() {
 }
 
 function updateStoreInfo() {
+    document.title = configLoja.nomeloja || 'Cardápio Digital';
     document.getElementById('nome-loja').textContent = configLoja.nomeloja;
     document.querySelector('#endereco-loja span').textContent = configLoja.enderecoloja;
     document.querySelector('#horario-funcionamento span').textContent = configLoja.horariofuncionamento;
-    document.getElementById('logo-img').src = configLoja.logourl || 'https://placehold.co/90x90';
-    document.getElementById('capa-img').src = configLoja.capaurl || 'https://placehold.co/800x280';
+    document.getElementById('logo-img').src = configLoja.logourl || 'https://placehold.co/100x100';
+    document.getElementById('capa-img').src = configLoja.capaurl || 'https://placehold.co/800x250';
 }
 
 function showInfo(searchTerm = '') {
@@ -98,17 +102,17 @@ function showInfo(searchTerm = '') {
         const swiperWrapper = secao.querySelector('.swiper-wrapper');
         produtosAgrupados[categoria].forEach(p => {
             const card = document.createElement('div');
-            card.className = 'swiper-slide produto-item';
-            card.innerHTML = `<img src="${p.imagem_url || 'https://placehold.co/150x100'}" alt="${p.nome}" class="produto-imagem"><h3>${p.nome}</h3><p>R$ ${parseFloat(p.preco).toFixed(2)}</p><button class="add-to-cart-btn" data-product-id="${p.id}">Adicionar</button>`;
+            card.className = 'swiper-slide'; // A classe produto-item é adicionada no wrapper interno
+            card.innerHTML = `<div class="produto-item"><img src="${p.imagem_url || 'https://placehold.co/150x140'}" alt="${p.nome}" class="produto-imagem"><h3>${p.nome}</h3><p>R$ ${parseFloat(p.preco).toFixed(2)}</p><button class="add-to-cart-btn" data-product-id="${p.id}">Adicionar</button></div>`;
             swiperWrapper.appendChild(card);
             card.querySelector('.add-to-cart-btn').addEventListener('click', (e) => adicionarAoCarrinho(p, e.target));
             card.querySelector('.produto-imagem').addEventListener('click', (e) => openImageModal(e.target.src));
         });
 
         new Swiper(`#${swiperContainerId}`, {
-            effect: 'slide', slidesPerView: 'auto', spaceBetween: 15, grabCursor: true,
+            effect: 'slide', slidesPerView: 'auto', spaceBetween: 16, grabCursor: true,
             navigation: { nextEl: `#${swiperContainerId} .swiper-button-next`, prevEl: `#${swiperContainerId} .swiper-button-prev` },
-            breakpoints: { 600: { slidesPerView: 3, spaceBetween: 20 }, 768: { slidesPerView: 4, spaceBetween: 25 } }
+            breakpoints: { 600: { slidesPerView: 3, spaceBetween: 20 }, 768: { slidesPerView: 4, spaceBetween: 24 } }
         });
     });
 }
@@ -118,7 +122,7 @@ function showInfo(searchTerm = '') {
 function setupButtonListeners() {
     if (startOrderBtn) {
         startOrderBtn.addEventListener('click', () => {
-            catalogoContainer.scrollIntoView({ behavior: 'smooth' });
+            catalogoContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     }
     if (backToTopBtn) {
@@ -131,7 +135,7 @@ function setupButtonListeners() {
 function setupScrollListeners() {
     window.addEventListener('scroll', () => {
         // Lógica para a barra de navegação fixa
-        if (window.scrollY > siteHeader.offsetHeight) {
+        if (storeInfoContainer && window.scrollY > storeInfoContainer.offsetTop) {
             stickyNav.classList.add('visible');
         } else {
             stickyNav.classList.remove('visible');
@@ -139,8 +143,8 @@ function setupScrollListeners() {
 
         // Lógica para o botão de voltar ao topo
         if (backToTopBtn) {
-            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-                backToTopBtn.style.display = "block";
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                backToTopBtn.style.display = "flex";
             } else {
                 backToTopBtn.style.display = "none";
             }
@@ -158,15 +162,21 @@ function setupStickyNav() {
     linksContainer.querySelectorAll('a').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
+            const targetElement = document.querySelector(this.getAttribute('href'));
+            if(targetElement) {
+                const offsetTop = targetElement.offsetTop - stickyNav.offsetHeight;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
         });
     });
 }
 
 function setupImageModal() {
     const modal = document.getElementById("imageModal");
+    if (!modal) return;
     const modalImg = document.getElementById("modalImage");
     const span = document.getElementsByClassName("close-image-modal")[0];
 
@@ -183,7 +193,7 @@ function showToast(message) {
     toast.className = 'toast-notification';
     toast.textContent = message;
     document.body.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => toast.classList.add('show'), 10);
     setTimeout(() => { toast.classList.remove('show'); toast.addEventListener('transitionend', () => toast.remove()); }, 3000);
 }
 
@@ -191,7 +201,7 @@ function adicionarAoCarrinho(produto, botao) {
     const existente = itensCarrinho.find(item => item.id === produto.id);
     if (existente) existente.quantidade++; else itensCarrinho.push({ ...produto, quantidade: 1 });
     if (botao) {
-        botao.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
+        botao.innerHTML = '<i class="fas fa-check"></i>';
         botao.classList.add('added');
         setTimeout(() => { botao.innerHTML = 'Adicionar'; botao.classList.remove('added'); }, 1500);
     }
@@ -217,12 +227,17 @@ function ativarCarrinho() {
     const total = itensCarrinho.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
     const itemCount = itensCarrinho.reduce((acc, item) => acc + item.quantidade, 0);
     const cartItemCountEl = document.getElementById('cartItemCount');
-    if (cartItemCountEl) { cartItemCountEl.textContent = itemCount; cartItemCountEl.style.display = itemCount > 0 ? 'block' : 'none'; }
+    if (cartItemCountEl) { cartItemCountEl.textContent = itemCount; cartItemCountEl.style.display = itemCount > 0 ? 'flex' : 'none'; }
     const itensHtml = itensCarrinho.map(item => `<li><span class="item-info">${item.nome} x${item.quantidade} - R$ ${(item.preco * item.quantidade).toFixed(2)}</span><button class="remove-item-btn" data-product-id="${item.id}" title="Remover item">❌</button></li>`).join('');
-    cartContainer.innerHTML = `<h2><i class="fas fa-shopping-cart"></i> Meu Carrinho</h2>${itensCarrinho.length > 0 ? `<ul>${itensHtml}</ul>` : '<p>Seu carrinho está vazio.</p>'}<p>Total: R$ ${total.toFixed(2)}</p>${itensCarrinho.length > 0 ? '<button id="btnFinalizarPedido"><i class="fas fa-money-check-alt"></i> Finalizar Pedido</button>' : ''}`;
-    cartContainer.style.display = 'block';
-    animateIn(cartContainer);
-    document.querySelectorAll('.remove-item-btn').forEach(btn => btn.addEventListener('click', (e) => removerDoCarrinho(e.target.dataset.productId)));
+    cartContainer.innerHTML = `<h2><i class="fas fa-shopping-cart"></i> Meu Carrinho</h2>${itensCarrinho.length > 0 ? `<ul>${itensHtml}</ul>` : '<p>Seu carrinho está vazio.</p>'}<p class="total-price">Total: R$ ${total.toFixed(2)}</p>${itensCarrinho.length > 0 ? '<button id="btnFinalizarPedido"><i class="fas fa-money-check-alt"></i> Finalizar Pedido</button>' : ''}`;
+    
+    if (itensCarrinho.length > 0) {
+        cartContainer.style.display = 'block';
+    } else {
+        cartContainer.style.display = 'none';
+    }
+
+    document.querySelectorAll('.remove-item-btn').forEach(btn => btn.addEventListener('click', (e) => removerDoCarrinho(e.currentTarget.dataset.productId)));
     const finalizarBtn = document.getElementById('btnFinalizarPedido');
     if (finalizarBtn) finalizarBtn.addEventListener('click', exibirFormulario);
 }
@@ -234,10 +249,15 @@ function criarFormulario() {
 }
 
 function exibirFormulario() {
+    if (itensCarrinho.length === 0) {
+        showToast("Seu carrinho está vazio!");
+        return;
+    }
     catalogoContainer.style.display = 'none';
+    startOrderBtn.style.display = 'none';
     cartContainer.style.display = 'none';
     formContainer.style.display = 'block';
-    animateIn(formContainer);
+    
     const deliveryTypeSelect = document.getElementById('deliveryTypeSelect');
     const addressField = document.getElementById('addressField');
     const paymentMethodSelect = document.getElementById('paymentMethodSelect');
@@ -277,5 +297,3 @@ function gerarMensagemWhatsApp() {
     if (dadosCliente.tipoEntrega === 'Tele-entrega') msg += `\r\nQuanto que vai custar a minha entrega?`;
     return msg;
 }
-
-function animateIn(element) { if (element) { element.offsetHeight; element.classList.add('fade-in'); } }
