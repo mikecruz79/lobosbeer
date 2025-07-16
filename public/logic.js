@@ -133,7 +133,8 @@ function setupButtonListeners() {
 }
 
 function setupScrollListeners() {
-    const scrollThreshold = startOrderBtn ? startOrderBtn.offsetTop : 300;
+    // Define o ponto de ativação da navegação um pouco abaixo do topo do botão
+    const scrollThreshold = startOrderBtn ? startOrderBtn.offsetTop + startOrderBtn.offsetHeight : 300;
 
     window.addEventListener('scroll', () => {
         // Lógica para a barra de navegação fixa
