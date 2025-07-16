@@ -741,6 +741,7 @@ button {
   }
 
   #catalogo {
+    display: grid; /* Habilita o grid */
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Ajusta grid para telas maiores */
   }
 
@@ -773,17 +774,26 @@ button {
   margin: var(--spacing-sm) 0;
 }
 
-.footer-social-icons a {
+.footer-social-icons a,
+.footer-social-icons span {
   color: var(--text-color-light);
   font-size: 1.5em;
   margin: 0 var(--spacing-sm);
   transition: color 0.3s ease, transform 0.3s ease;
+  cursor: pointer; /* Mantém o cursor de ponteiro para consistência */
 }
 
-.footer-social-icons a:hover {
+.footer-social-icons a:hover,
+.footer-social-icons span:hover {
   color: var(--primary-color);
   transform: scale(1.1);
 }
+
+/* Remove o comportamento de link do span, mas mantém a aparência */
+.footer-social-icons span {
+  cursor: not-allowed;
+}
+
 
 .footer-dev-note {
   margin-top: var(--spacing-sm);

@@ -114,6 +114,19 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Rota POST para login
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    // Validação de login no servidor
+    // Em um aplicativo real, isso seria verificado contra um banco de dados com senhas hasheadas.
+    if (username === 'daniel' && password === 'lobo123') {
+        res.status(200).json({ message: 'Login bem-sucedido' });
+    } else {
+        res.status(401).json({ error: 'Usuário ou senha incorretos.' });
+    }
+});
+
 // Rota GET para obter todos os produtos
 app.get('/produtos', async (req, res) => {
     try {

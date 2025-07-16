@@ -12,6 +12,8 @@ const formContainer = document.getElementById("formContainer");
 const cartContainer = document.getElementById("cartContainer");
 const stickyNav = document.getElementById("sticky-nav");
 const siteHeader = document.querySelector(".site-header");
+const startOrderBtn = document.getElementById("startOrderBtn");
+const backToTopBtn = document.getElementById("backToTopBtn");
 
 // --- Funções de Validação (Definidas no topo) ---
 function validateField(el, errEl, valid, msg) { if (valid) { el.classList.remove('input-error'); if (errEl) errEl.style.display = 'none'; return true; } else { el.classList.add('input-error'); if (errEl) { errEl.style.display = 'block'; errEl.textContent = msg; } return false; } }
@@ -26,6 +28,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     await loadPageData();
     criarFormulario();
     setupImageModal();
+    setupScrollListeners();
+    setupButtonListeners();
 });
 
 async function loadPageData() {
@@ -41,6 +45,9 @@ async function loadPageData() {
         updateStoreInfo();
         showInfo();
         setupStickyNav();
+        
+        // Anima a entrada dos elementos principais
+        animateIn(startOrderBtn);
         animateIn(catalogoContainer);
 
         document.getElementById('searchInput').addEventListener('input', (e) => showInfo(e.target.value));
@@ -108,6 +115,39 @@ function showInfo(searchTerm = '') {
 
 // --- Funções de Interação com o Usuário ---
 
+function setupButtonListeners() {
+    if (startOrderBtn) {
+        startOrderBtn.addEventListener('click', () => {
+            catalogoContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+    if (backToTopBtn) {
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+}
+
+function setupScrollListeners() {
+    window.addEventListener('scroll', () => {
+        // Lógica para a barra de navegação fixa
+        if (window.scrollY > siteHeader.offsetHeight) {
+            stickyNav.classList.add('visible');
+        } else {
+            stickyNav.classList.remove('visible');
+        }
+
+        // Lógica para o botão de voltar ao topo
+        if (backToTopBtn) {
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                backToTopBtn.style.display = "block";
+            } else {
+                backToTopBtn.style.display = "none";
+            }
+        }
+    });
+}
+
 function setupStickyNav() {
     const categories = Array.from(document.querySelectorAll('.category-title'));
     if (categories.length === 0) return;
@@ -122,14 +162,6 @@ function setupStickyNav() {
                 behavior: 'smooth'
             });
         });
-    });
-
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > siteHeader.offsetHeight) {
-            stickyNav.classList.add('visible');
-        } else {
-            stickyNav.classList.remove('visible');
-        }
     });
 }
 
@@ -197,7 +229,7 @@ function ativarCarrinho() {
 
 function criarFormulario() {
     if (!formContainer) return;
-    formContainer.innerHTML = `<h2><i class="fas fa-user-shield"></i> Seus Dados</h2><form id="orderForm"><div id="formErrorFeedback" class="form-error-feedback"></div><div class="form-group"><label for="nameInput"><i class="fas fa-user"></i> Nome completo:</label><input type="text" id="nameInput" required maxlength="40"><p class="error-message-field" id="nameError"></p></div><div class="form-group"><label for="whatsappInput"><i class="fab fa-whatsapp"></i> WhatsApp:</label><input type="text" id="whatsappInput" required inputmode="numeric" pattern="[0-9]*" minlength="11" maxlength="13"><p class="error-message-field" id="whatsappError"></p></div><div class="form-group"><label for="emailInput"><i class="fas fa-at"></i> E-mail:</label><input type="email" id="emailInput" required><p class="error-message-field" id="emailError"></p></div><div class="form-group"><label for="deliveryTypeSelect"><i class="fas fa-truck"></i> Tipo de entrega:</label><select id="deliveryTypeSelect" required><option value="">Selecione...</option><option value="Retirada">Retirada</option><option value="Tele-entrega">Tele-entrega</option></select><p class="error-message-field" id="deliveryTypeError"></p></div><div id="addressField" class="form-group" style="display:none;"><label for="addressInput"><i class="fas fa-map-marker-alt"></i> Endereço:</label><input type="text" id="addressInput"><p class="error-message-field" id="addressError"></p></div><div class="form-group"><label for="paymentMethodSelect"><i class="fas fa-credit-card"></i> Forma de Pagamento:</label><select id="paymentMethodSelect" required><option value="">Selecione...</option><option value="Cartão de Crédito">Cartão de Crédito</option><option value="Cartão de Débito">Cartão de Débito</option><option value="Pix">Pix</option><option value="Dinheiro">Dinheiro</option></select><p class="error-message-field" id="paymentMethodError"></p></div><div id="changeField" class="form-group" style="display:none;"><label for="changeInput"><i class="fas fa-money-bill-wave"></i> Troco para quanto? (Opcional):</label><input type="number" id="changeInput" step="0.01" min="0"><p class="error-message-field" id="changeError"></p></div><button type="button" id="continueBtn">Enviar Pedido <i class="fas fa-paper-plane"></i></button></form>`;
+    formContainer.innerHTML = `<h2><i class="fas fa-user-shield"></i> Seus Dados</h2><form id="orderForm"><div id="formErrorFeedback" class="form-error-feedback"></div><div class="form-group"><label for="nameInput"><i class="fas fa-user"></i> Nome completo:</label><input type="text" id="nameInput" required maxlength="40"><p class="error-message-field" id="nameError"></p></div><div class="form-group"><label for="whatsappInput"><i class="fab fa-whatsapp"></i> WhatsApp:</label><input type="text" id="whatsappInput" required inputmode="numeric" pattern="[0-9]*" minlength="11" maxlength="13"><p class="error-message-field" id="whatsappError"></p></div><div class="form-group"><label for="emailInput"><i class="fas fa-at"></i> E-mail:</label><input type="email" id="emailInput" required><p class="error-message-field" id="emailError"></p></div><div class="form-group"><label for="deliveryTypeSelect"><i class="fas fa-truck"></i> Tipo de entrega:</label><select id="deliveryTypeSelect" required><option value="">Selecione...</option><option value="Retirada">Retirada</option><option value="Tele-entrega">Tele-entrega</option></select><p class="error-message-field" id="deliveryTypeError"></p></div><div id="addressField" class="form-group" style="display:none;"><label for="addressInput"><i class="fas fa-map-marker-alt"></i> Endereço:</label><input type="text" id="addressInput"><p class="error-message-field" id="addressError"></p></div><div class="form-group"><label for="paymentMethodSelect"><i class="fas fa-credit-card"></i> Forma de Pagamento:</label><select id="paymentMethodSelect" required><option value="">Selecione...</option><option value="Cartão de Crédito">Cartão de Crédito</option><option value="Cartão de Débito">Cartão de Débito</option><option value="Pix">Pix</option><option value="Dinheiro">Dinheiro</option></select><p class="error-message-field" id="paymentMethodError"></p></div><div id="changeField" class="form-group" style="display:none;"><label for="changeInput"><i class="fas fa-money-bill-wave"></i> Troco para:</label><input type="number" id="changeInput" step="0.01" placeholder="Ex: 50.00"><p class="error-message-field" id="changeError"></p></div><button type="button" id="continueBtn"><i class="fas fa-paper-plane"></i> Enviar Pedido</button></form><div id="avisoFinal" style="display:none;">Seu pedido será enviado para o WhatsApp.</div>`;
     formContainer.style.display = 'none';
 }
 

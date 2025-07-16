@@ -82,6 +82,10 @@ async function loadProductsAndConfig() {
         const products = await productsRes.json();
         const config = await configRes.json();
 
+        // Processa e renderiza as configurações primeiro
+        renderConfig(config);
+
+        // Continua com o processamento dos produtos
         categoryOrder = config.ordem_categorias ? JSON.parse(config.ordem_categorias) : [];
 
         productsByCategory = products.reduce((acc, product) => {
@@ -135,8 +139,8 @@ function renderProductList() {
                                 <td data-label="Nome"><input type="text" value="${product.nome || ''}" data-field="nome"></td>
                                 <td data-label="Preço"><input type="number" step="0.01" value="${product.preco || 0}" data-field="preco"></td>
                                 <td data-label="Imagem" class="image-cell">
-                                    <input type="text" value="${product.imagem_url || ''}" data-field="imagem_url">
-                                    <input type="file" accept="image/*" class="upload-single-image-file">
+                                    <input type="text" value="${product.imagem_url || ''}" data-field="imagem_url" placeholder="URL da imagem">
+                                    <input type="file" accept="image/*" class="upload-single-image-file" style="display:none;">
                                     <button type="button" class="upload-single-image-btn">Upload</button>
                                     <img src="${product.imagem_url || 'https://placehold.co/50x50'}" alt="${product.nome || ''}" width="50">
                                 </td>
@@ -427,32 +431,23 @@ addProductForm.addEventListener('submit', async function(event) {
 
 
 // --- Funções de Configurações ---
-async function loadConfig() {
-    try {
-        const response = await fetch('/config');
-        if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
-        const config = await response.json();
-
-        if (config) {
-            document.getElementById('nomeLoja').value = config.nomeloja || '';
-            document.getElementById('enderecoLoja').value = config.enderecoloja || '';
-            document.getElementById('horarioFuncionamento').value = config.horariofuncionamento || '';
-            
-            let localWhatsapp = (config.whatsappnumber || '').replace(/\D/g, '');
-            if (localWhatsapp.startsWith('55')) {
-                localWhatsapp = localWhatsapp.substring(2);
-            }
-            document.getElementById('whatsappNumberConfig').value = localWhatsapp;
-            originalWhatsappValue = localWhatsapp;
-
-            document.getElementById('logoUrl').value = config.logourl || '';
-            document.getElementById('capaUrl').value = config.capaurl || '';
+function renderConfig(config) {
+    if (config) {
+        document.getElementById('nomeLoja').value = config.nomeloja || '';
+        document.getElementById('enderecoLoja').value = config.enderecoloja || '';
+        document.getElementById('horarioFuncionamento').value = config.horariofuncionamento || '';
+        
+        let localWhatsapp = (config.whatsappnumber || '').replace(/\D/g, '');
+        if (localWhatsapp.startsWith('55')) {
+            localWhatsapp = localWhatsapp.substring(2);
         }
-        showElementWithAnimation(configSection, 'block');
-    } catch (error) {
-        console.error('Erro ao carregar configurações:', error);
-        alert('Erro ao carregar configurações da loja.');
+        document.getElementById('whatsappNumberConfig').value = localWhatsapp;
+        originalWhatsappValue = localWhatsapp;
+
+        document.getElementById('logoUrl').value = config.logourl || '';
+        document.getElementById('capaUrl').value = config.capaurl || '';
     }
+    showElementWithAnimation(configSection, 'block');
 }
 
 configForm.addEventListener('submit', async function(event) {
@@ -489,7 +484,7 @@ configForm.addEventListener('submit', async function(event) {
             whatsappInput.disabled = true;
             document.getElementById('editWhatsappBtn').style.display = 'inline-block';
             document.getElementById('cancelEditWhatsappBtn').style.display = 'none';
-            loadConfig();
+            // Não precisa recarregar, os dados já estão na tela
         } else {
              throw new Error(await saveResponse.text());
         }
@@ -502,7 +497,6 @@ configForm.addEventListener('submit', async function(event) {
 // --- Inicialização ---
 window.addEventListener('DOMContentLoaded', () => {
     loadProductsAndConfig();
-    loadConfig();
 });
 
 // --- Listeners de UI ---
@@ -526,4 +520,8 @@ document.getElementById('cancelEditWhatsappBtn').addEventListener('click', () =>
 document.getElementById('whatsappNumberConfig').addEventListener('input', () => {
     const whatsappInput = document.getElementById('whatsappNumberConfig');
     validateWhatsapp(whatsappInput, document.getElementById('whatsappConfigError'));
+});
+
+document.getElementById('uploadNewImageBtn').addEventListener('click', () => {
+    document.getElementById('newProductImageFile').click();
 });
