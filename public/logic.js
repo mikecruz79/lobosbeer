@@ -133,18 +133,8 @@ function setupButtonListeners() {
 }
 
 function setupScrollListeners() {
-    // Define o ponto de ativação da navegação um pouco abaixo do topo do botão
-    const scrollThreshold = startOrderBtn ? startOrderBtn.offsetTop + startOrderBtn.offsetHeight : 300;
-
+    // Lógica para o botão de voltar ao topo (mantida)
     window.addEventListener('scroll', () => {
-        // Lógica para a barra de navegação fixa
-        if (window.scrollY > scrollThreshold) {
-            stickyNav.classList.add('visible');
-        } else {
-            stickyNav.classList.remove('visible');
-        }
-
-        // Lógica para o botão de voltar ao topo
         if (backToTopBtn) {
             if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
                 backToTopBtn.style.display = "flex";
@@ -153,6 +143,43 @@ function setupScrollListeners() {
             }
         }
     });
+
+    // Lógica da barra de navegação com Intersection Observer
+    if (startOrderBtn && stickyNav) {
+        const observerOptions = {
+            root: null, // viewport
+            rootMargin: '0px',
+            threshold: 0.1 // Gatilho quando 10% do elemento está visível/invisível
+        };
+
+        const startBtnObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // Se o botão NÃO está visível na tela, mostra a nav
+                if (!entry.isIntersecting) {
+                    stickyNav.classList.add('visible');
+                } else {
+                    stickyNav.classList.remove('visible');
+                }
+            });
+        }, observerOptions);
+
+        startBtnObserver.observe(startOrderBtn);
+    }
+    
+    // Observador para o formulário, para esconder a nav quando ele aparecer
+    if (formContainer && stickyNav) {
+        const formObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    stickyNav.classList.add('force-hidden');
+                } else {
+                    stickyNav.classList.remove('force-hidden');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        formObserver.observe(formContainer);
+    }
 }
 
 function setupStickyNav() {

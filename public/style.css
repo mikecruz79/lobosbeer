@@ -554,3 +554,57 @@ button {
     justify-content: center;
   }
 }
+
+/* Animação de Shake para o Carrinho */
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+.shake {
+  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* Estilos de erro para formulários */
+.input-error {
+    border-color: #e74c3c !important;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2) !important;
+}
+.error-message-field {
+    color: #e74c3c;
+    font-size: 0.85em;
+    margin-top: 5px;
+    display: none;
+}
+.form-error-feedback {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #c0392b;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+    display: none;
+}
+
+/* Força a nav a se esconder, sobrepondo a classe .visible */
+.sticky-nav.force-hidden {
+    transform: translateY(-120%) !important;
+}
+
+/* Estilo para o botão de continuar/enviar pedido */
+#continueBtn {
+    background-color: var(--secondary-color);
+    color: var(--text-color-light);
+    width: 100%;
+    margin-top: var(--spacing-md);
+    padding: 1rem;
+    font-size: 1.1em;
+    font-weight: 600;
+    border-radius: 8px; /* Consistência com outros botões */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+#continueBtn:hover {
+    background-color: #2ecc71;
+    transform: translateY(-2px);
+}
