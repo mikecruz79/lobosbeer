@@ -1,48 +1,84 @@
-/* admin.css - Refatorado para Carrossel */
+/* admin.css - Refatorado com o Design System do style.css */
 
-/* Estilos Globais e de Layout */
+/* 1. Variáveis e Estilos Globais Importados
+-------------------------------------------------- */
+:root {
+  --primary-color: #2980b9; /* Azul mais sóbrio */
+  --secondary-color: #27ae60; /* Verde para sucesso */
+  --accent-color: #d35400; /* Laranja para destaque */
+  --danger-color: #c0392b; /* Vermelho para perigo/exclusão */
+  --text-color-dark: #34495e; /* Texto principal */
+  --text-color-light: #ffffff;
+  --text-color-medium: #7f8c8d; /* Para subtextos */
+  --background-light: #f4f6f8; /* Fundo geral mais suave */
+  --background-white: #ffffff;
+  --border-color: #e1e5e8;
+  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.07);
+  --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.1);
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2.5rem;
+  --border-radius: 12px;
+}
+
+body {
+  font-family: 'Poppins', 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-light);
+  color: var(--text-color-dark);
+  margin: 0;
+}
+
 body.modal-is-active {
     overflow: hidden;
 }
 
+/* 2. Layout Principal do Admin
+-------------------------------------------------- */
 .admin-container {
     max-width: 95%;
-    margin: 40px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+    margin: var(--spacing-lg) auto;
+    padding: var(--spacing-lg);
+    background: var(--background-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-medium);
 }
 
 h2 {
     text-align: center;
-    color: #333;
-    margin-bottom: 20px;
+    color: var(--text-color-dark);
+    margin-bottom: var(--spacing-md);
     font-weight: 600;
+    font-size: 1.8em;
 }
 
 h3 {
-    margin-top: 40px;
-    margin-bottom: 20px;
-    color: #555;
-    border-bottom: 2px solid #eef0f2;
-    padding-bottom: 10px;
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    color: var(--text-color-dark);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: var(--spacing-sm);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1.5em;
 }
 
-/* Estilos de Formulários Gerais */
+/* 3. Estilos de Formulários Gerais
+-------------------------------------------------- */
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: var(--spacing-md);
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: var(--spacing-xs);
     font-weight: 500;
     font-size: 0.9em;
+    color: var(--text-color-medium);
 }
 
 .form-group input[type="text"],
@@ -51,27 +87,34 @@ h3 {
 .form-group input[type="file"],
 .form-group select {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     box-sizing: border-box;
     font-size: 1em;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.form-group input:focus, .form-group select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.2);
+  outline: none;
 }
 
 .form-group-inline {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
 }
-
 .form-group-inline label {
     margin-bottom: 0;
 }
 
-/* Botões */
+/* 4. Botões
+-------------------------------------------------- */
 button {
-    font-family: inherit;
+    font-family: 'Poppins', sans-serif;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -79,79 +122,89 @@ button {
     font-size: 1rem;
     font-weight: 500;
     transition: all 0.2s ease;
+    letter-spacing: 0.3px;
 }
-
 button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
 }
 
 #logoutBtn {
-    background-color: #e74c3c;
-    color: white;
+    background-color: var(--accent-color);
+    color: var(--text-color-light);
     float: right;
-    margin-top: -40px;
+    margin-top: -60px; /* Ajuste para novo H2 */
 }
-#logoutBtn:hover { background-color: #c0392b; }
+#logoutBtn:hover { background-color: #e67e22; }
 
-.save-btn { background-color: #2980b9; color: white; }
+.save-btn { background-color: var(--primary-color); color: var(--text-color-light); }
 .save-btn:hover { background-color: #3498db; }
 
-.delete-btn { background-color: #95a5a6; color: white; }
-.delete-btn:hover { background-color: #7f8c8d; }
+.delete-btn { background-color: var(--danger-color); color: var(--text-color-light); }
+.delete-btn:hover { background-color: #e74c3c; }
 
-.order-btn { font-size: 0.8rem; padding: 5px 10px; background-color: #6c757d; color: white; }
-.order-btn:hover { background-color: #5a6268; }
+.order-btn {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    background-color: var(--text-color-medium);
+    color: var(--text-color-light);
+}
+.order-btn:hover { background-color: var(--text-color-dark); }
 
-/* Seção de Produtos com Carrossel */
+/* 5. Seção de Produtos com Carrossel
+-------------------------------------------------- */
 .products-section {
-    margin-top: 30px;
+    margin-top: var(--spacing-lg);
 }
 
 .category-carousel-container {
-    margin-bottom: 40px;
+    margin-bottom: var(--spacing-lg);
 }
 
 .category-carousel-title {
     font-size: 1.3em;
     font-weight: 600;
-    margin-bottom: 15px;
-    padding-left: 5px;
+    margin-bottom: var(--spacing-md);
+    padding-left: var(--spacing-xs);
+    color: var(--text-color-dark);
 }
 
 .admin-swiper.swiper-container {
     width: 100%;
-    padding: 10px 5px; /* Espaço para sombra */
+    padding: 10px 5px 30px 5px; /* Espaço para sombra e paginação */
 }
 
 .admin-swiper .swiper-slide {
-    width: 90%; /* Ocupa a maior parte da tela em mobile */
-    max-width: 320px; /* Largura máxima para cada card */
+    width: 90%;
+    max-width: 320px;
     height: auto;
-    flex-shrink: 0; /* Impede que o slide encolha */
 }
 
 .admin-product-card {
-    background: #f9fafb;
-    border: 1px solid #eef0f2;
-    border-radius: 12px;
+    background: var(--background-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 100%;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.admin-product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
 }
 
 .admin-product-image-container {
     position: relative;
     height: 160px;
-    background-color: #fff; /* Fundo branco para imagens com transparência */
+    background-color: var(--background-white);
 }
-
 .admin-product-image-container img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Correção do Zoom: Garante que a imagem inteira seja visível */
+    object-fit: contain;
 }
 
 .admin-product-image-container .upload-single-image-btn {
@@ -160,7 +213,7 @@ button:hover {
     left: 50%;
     transform: translateX(-50%);
     background-color: rgba(0, 0, 0, 0.6);
-    color: white;
+    color: var(--text-color-light);
     border: 1px solid rgba(255, 255, 255, 0.8);
     padding: 6px 12px;
     font-size: 0.85em;
@@ -168,24 +221,21 @@ button:hover {
     opacity: 0;
     transition: opacity 0.3s ease;
 }
-
 .admin-product-card:hover .upload-single-image-btn {
     opacity: 1;
 }
 
 .admin-product-details {
-    padding: 15px;
+    padding: var(--spacing-md);
     flex-grow: 1;
     display: flex;
     flex-direction: column;
 }
-
 .admin-product-details .form-group {
-    margin-bottom: 12px;
+    margin-bottom: var(--spacing-sm);
 }
 .admin-product-details .form-group label {
     font-size: 0.85em;
-    color: #555;
 }
 .admin-product-details .form-group input {
     padding: 8px;
@@ -193,56 +243,52 @@ button:hover {
 }
 
 .admin-product-actions {
-    margin-top: auto; /* Empurra para o final */
-    padding-top: 10px;
+    margin-top: auto;
+    padding-top: var(--spacing-sm);
     display: flex;
-    gap: 10px;
+    gap: var(--spacing-sm);
 }
-
 .admin-product-actions button {
     flex-grow: 1;
     width: 50%;
 }
 
-/* Setas de Navegação do Swiper - REMOVIDAS */
-.admin-swiper .swiper-button-next,
-.admin-swiper .swiper-button-prev {
-    display: none !important;
-}
-
-/* Estilos da Paginação */
 .admin-swiper .swiper-pagination {
-    position: static; /* Posiciona a paginação dentro do fluxo do container */
-    margin-top: 15px;
+    position: static;
+    margin-top: var(--spacing-md);
 }
 .admin-swiper .swiper-pagination-bullet {
-    background-color: #cccccc;
-    opacity: 1;
-    transition: background-color 0.3s ease;
+    background-color: var(--text-color-medium);
+    opacity: 0.7;
 }
 .admin-swiper .swiper-pagination-bullet-active {
-    background-color: #2980b9;
+    background-color: var(--primary-color);
+    opacity: 1;
 }
 
-/* Formulário de Adicionar Novo Produto */
+/* 6. Formulário de Adicionar Novo Produto
+-------------------------------------------------- */
 #addProductForm {
-    margin-top: 30px;
-    padding: 20px;
-    border-top: 1px solid #eee;
-    background-color: #fdfdfd;
-    border-radius: 8px;
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+    background-color: var(--background-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-soft);
 }
-
 #addProductForm button[type="submit"] {
      display: block;
      width: 100%;
-     background-color: #27ae60;
+     background-color: var(--secondary-color);
+     padding: 1rem;
+     font-size: 1.1em;
 }
 #addProductForm button[type="submit"]:hover {
     background-color: #2ecc71;
 }
 
-/* Estilos para o Modal de Ordenação (mantidos) */
+/* 7. Modal de Ordenação
+-------------------------------------------------- */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -253,57 +299,127 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999; /* Z-index elevado para garantir a sobreposição */
+    z-index: 9999;
 }
-
 .modal-content {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    background-color: var(--background-white);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-medium);
     width: 90%;
     max-width: 500px;
 }
-
-.modal-content h4 { margin-top: 0; margin-bottom: 10px; }
-.modal-content p { margin-top: 0; margin-bottom: 20px; font-size: 0.9em; color: #666; }
-
-.sortable-list { list-style: none; padding: 0; margin: 0; border: 1px solid #ddd; border-radius: 4px; }
-.sortable-list li { padding: 12px; background-color: #f9f9f9; border-bottom: 1px solid #ddd; cursor: grab; }
+.modal-content h4 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-xs);
+    font-size: 1.4em;
+    color: var(--text-color-dark);
+}
+.modal-content p {
+    margin-top: 0;
+    margin-bottom: var(--spacing-md);
+    font-size: 0.9em;
+    color: var(--text-color-medium);
+}
+.sortable-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+.sortable-list li {
+    padding: 12px;
+    background-color: var(--background-light);
+    border-bottom: 1px solid var(--border-color);
+    cursor: grab;
+}
 .sortable-list li:last-child { border-bottom: none; }
-.sortable-list li.sortable-ghost { background-color: #cce5ff; opacity: 0.7; }
+.sortable-list li.sortable-ghost {
+    background-color: #cce5ff;
+    opacity: 0.7;
+}
+.modal-actions {
+    margin-top: var(--spacing-md);
+    text-align: right;
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+}
 
-.modal-actions { margin-top: 20px; text-align: right; }
+/* 8. Outros Estilos
+-------------------------------------------------- */
+.config-section {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+}
+.config-section .form-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-sm);
+}
+.config-section .form-group label {
+    flex-basis: 180px;
+    margin-bottom: 0;
+    margin-right: var(--spacing-sm);
+}
+.config-section .form-group input {
+    flex-grow: 1;
+    margin-right: var(--spacing-sm);
+}
+.config-section button[type="submit"] {
+    display: block;
+    width: 100%;
+    margin-top: var(--spacing-md);
+    background-color: var(--primary-color);
+    color: var(--text-color-light);
+    padding: 1rem;
+}
 
-/* Outros Estilos (mantidos) */
-.config-section { margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
-.config-section .form-group { display: flex; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
-.config-section .form-group label { flex-basis: 180px; margin-bottom: 0; margin-right: 10px; }
-.config-section .form-group input[type="text"], .config-section .form-group input[type="number"] { flex-grow: 1; margin-right: 10px; }
-.config-section .form-group input[type="file"] { flex-grow: 1; margin-right: 10px; flex-basis: auto; }
-.config-section .form-group button { flex-shrink: 0; margin-right: 10px; }
-.config-section button[type="submit"] { display: block; width: 100%; margin-top: 20px; }
+input.input-error {
+    border-color: var(--danger-color) !important;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2) !important;
+}
+.error-message-field {
+    color: var(--danger-color);
+    font-size: 0.8em;
+    margin-top: 4px;
+    display: none;
+}
+.info-message {
+    font-size: 0.9em;
+    color: var(--text-color-medium);
+    margin-top: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+}
 
-input.input-error { border-color: #e74c3c !important; }
-.error-message-field { color: #e74c3c; font-size: 0.8em; margin-top: 2px; display: none; }
-.info-message { font-size: 0.9em; color: #555; margin-top: 5px; margin-bottom: 10px; }
-
-/* Responsividade */
+/* 9. Responsividade
+-------------------------------------------------- */
 @media (max-width: 768px) {
     .admin-container {
         max-width: 100%;
-        padding: 15px;
+        padding: var(--spacing-md);
     }
     .admin-swiper .swiper-slide {
-        width: 85%; /* Cards maiores em telas de celular para melhor toque */
+        width: 85%;
     }
-    .config-section .form-group { flex-direction: column; align-items: flex-start; }
-    .config-section .form-group label { flex-basis: auto; margin-bottom: 5px; }
-    .config-section .form-group input { width: 100%; }
+    .config-section .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .config-section .form-group label {
+        flex-basis: auto;
+        margin-bottom: var(--spacing-xs);
+    }
+    .config-section .form-group input {
+        width: 100%;
+    }
 }
 
 @media (min-width: 1200px) {
     .admin-container {
-        max-width: 1100px; /* Container mais largo em desktops grandes */
+        max-width: 1100px;
     }
 }
