@@ -12,7 +12,6 @@ const formContainer = document.getElementById("formContainer");
 const cartContainer = document.getElementById("cartContainer");
 const stickyNav = document.getElementById("sticky-nav");
 const storeInfoContainer = document.querySelector(".store-info-container");
-const startOrderBtn = document.getElementById("startOrderBtn");
 const backToTopBtn = document.getElementById("backToTopBtn");
 
 // --- Funções de Validação (Definidas no topo) ---
@@ -276,7 +275,6 @@ function exibirFormulario() {
         return;
     }
     catalogoContainer.style.display = 'none';
-    startOrderBtn.style.display = 'none';
     cartContainer.style.display = 'none';
     formContainer.style.display = 'block';
     

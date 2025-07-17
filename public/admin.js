@@ -175,13 +175,23 @@ function renderProductList() {
         productListContainer.appendChild(categoryElement);
 
         new Swiper(`#${categoryId}`, {
-            slidesPerView: 'auto', // Usa 'auto' para o CSS controlar
+            slidesPerView: 'auto',
             spaceBetween: 16,
             grabCursor: true,
             pagination: {
                 el: `#${categoryId} .swiper-pagination`,
                 clickable: true,
             },
+            breakpoints: {
+                600: {
+                    slidesPerView: 2.5,
+                    spaceBetween: 20
+                },
+                900: {
+                    slidesPerView: 3.5,
+                    spaceBetween: 20
+                }
+            }
         });
     });
 
