@@ -227,6 +227,7 @@ function openOrderModal() {
         sortableCategoryList.appendChild(li);
     });
     orderModal.style.display = 'flex';
+    document.body.classList.add('modal-is-active'); // Congela o fundo
     new Sortable(sortableCategoryList, { animation: 150, ghostClass: 'sortable-ghost' });
 }
 
@@ -244,6 +245,7 @@ async function saveCategoryOrder() {
 
         alert('Ordem das categorias salva com sucesso!');
         orderModal.style.display = 'none';
+        document.body.classList.remove('modal-is-active'); // Descongela o fundo
         categoryOrder = newOrder;
         renderProductList();
     } catch (error) {
@@ -254,7 +256,10 @@ async function saveCategoryOrder() {
 
 // --- Listeners do Modal ---
 openOrderModalBtn.addEventListener('click', openOrderModal);
-cancelOrderBtn.addEventListener('click', () => orderModal.style.display = 'none');
+cancelOrderBtn.addEventListener('click', () => {
+    orderModal.style.display = 'none';
+    document.body.classList.remove('modal-is-active'); // Descongela o fundo
+});
 saveOrderBtn.addEventListener('click', saveCategoryOrder);
 
 
