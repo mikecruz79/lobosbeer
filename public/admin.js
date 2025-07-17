@@ -342,29 +342,40 @@ async function handleSingleImageUpload(event) {
     const imageUrlInput = row.querySelector('input[data-field="imagem_url"]');
     const imgElement = row.querySelector('.image-cell img');
 
-    if (fileInput.files.length === 0) {
-        alert('Por favor, selecione um arquivo de imagem.');
-        return;
-    }
+    // Simula um clique no input de arquivo que está escondido
+    fileInput.click();
 
-    const file = fileInput.files[0];
-    const formData = new FormData();
-    formData.append('image', file);
+    fileInput.onchange = async () => {
+        if (fileInput.files.length === 0) return; // Sai se nenhum arquivo for selecionado
 
-    try {
-        const response = await fetch('/upload-imagem', { method: 'POST', body: formData });
-        if (response.ok) {
-            const result = await response.json();
-            imageUrlInput.value = result.link;
-            if (imgElement) imgElement.src = result.link;
-            alert('Upload de imagem bem-sucedido!');
-        } else {
-             throw new Error(await response.text());
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const response = await fetch('/upload-imagem', { method: 'POST', body: formData });
+            if (response.ok) {
+                const result = await response.json();
+                imageUrlInput.value = result.link;
+                if (imgElement) imgElement.src = result.link;
+                
+                // Após o sucesso do upload, aciona o salvamento da linha inteira
+                const saveButton = row.querySelector('.save-btn');
+                if (saveButton) {
+                    saveButton.click(); // Dispara o evento de clique do botão "Salvar"
+                } else {
+                    alert('Upload bem-sucedido, mas o botão de salvar não foi encontrado para finalizar.');
+                }
+            } else {
+                 throw new Error(await response.text());
+            }
+        } catch (error) {
+            console.error('Erro no upload da imagem:', error);
+            alert('Erro no upload da imagem.');
+        } finally {
+            fileInput.value = ''; // Limpa o input de arquivo para futuras seleções
         }
-    } catch (error) {
-        console.error('Erro no upload da imagem:', error);
-        alert('Erro no upload da imagem.');
-    }
+    };
 }
 
 // --- Adicionar Novo Produto ---
@@ -401,8 +412,8 @@ addProductForm.addEventListener('submit', async function(event) {
         }
     }
 
+    // O ID não é mais gerado no cliente. O servidor cuidará disso.
     const newProduct = {
-        id: 'prod_' + Date.now(),
         nome: newProductNameInput.value.trim(),
         preco: parseFloat(newProductPriceInput.value),
         categoria: newProductCategoryInput.value.trim(),

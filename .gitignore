@@ -6,3 +6,9 @@ lobosbeer_project_analysis.md
 
 # Ignorar diretriz de desenvolvimento pessoal
 JAMAIS-SUPOSICAO.md
+
+# Ignorar arquivo obsoleto de versão antiga
+produtos.json
+
+# Ignorar diretriz de desenvolvimento pessoal
+README-DO-PROJETO.md
