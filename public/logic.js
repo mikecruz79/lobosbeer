@@ -135,39 +135,28 @@ function setupButtonListeners() {
 }
 
 function setupScrollListeners() {
+    const siteHeader = document.querySelector('.site-header');
+
     // Lógica para o botão de voltar ao topo
     window.addEventListener('scroll', () => {
         if (backToTopBtn) {
-            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+            if (window.scrollY > 200) {
                 backToTopBtn.style.display = "flex";
             } else {
                 backToTopBtn.style.display = "none";
             }
         }
+
+        // Lógica da barra de navegação baseada na posição de rolagem
+        if (siteHeader && stickyNav) {
+            // Aparece quando o usuário rola para além da altura do cabeçalho
+            if (window.scrollY > siteHeader.offsetHeight) {
+                stickyNav.classList.add('visible');
+            } else {
+                stickyNav.classList.remove('visible');
+            }
+        }
     });
-
-    // Lógica da barra de navegação com Intersection Observer
-    // A barra aparece quando a caixa de info da loja SOME da tela
-    if (storeInfoContainer && stickyNav) {
-        const observerOptions = {
-            root: null, // viewport
-            rootMargin: '0px',
-            threshold: 0 // Gatilho assim que o elemento sai ou entra na tela
-        };
-
-        const infoBoxObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                // Se a caixa de info NÃO está mais visível, mostra a nav
-                if (!entry.isIntersecting) {
-                    stickyNav.classList.add('visible');
-                } else {
-                    stickyNav.classList.remove('visible');
-                }
-            });
-        }, observerOptions);
-
-        infoBoxObserver.observe(storeInfoContainer);
-    }
     
     // Observador para o formulário, para esconder a nav quando ele aparecer
     if (formContainer && stickyNav) {

@@ -175,7 +175,7 @@ function renderProductList() {
         productListContainer.appendChild(categoryElement);
 
         new Swiper(`#${categoryId}`, {
-            slidesPerView: 1,
+            slidesPerView: 'auto', // Usa 'auto' para o CSS controlar
             spaceBetween: 16,
             grabCursor: true,
             pagination: {
