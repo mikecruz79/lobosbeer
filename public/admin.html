@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo</title>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
     <link rel="stylesheet" href="admin.css">
     <!-- Adiciona a biblioteca SortableJS -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
@@ -61,8 +62,8 @@
                 <button id="openOrderModalBtn" class="order-btn">Ordenar Categorias</button>
             </h3>
 
-            <div id="productList">
-                <!-- O conteúdo será gerado dinamicamente pelo admin.js -->
+            <div id="productList" class="product-list-carousels">
+                <!-- Carrosséis de produtos serão gerados dinamicamente aqui -->
             </div>
 
             <h3>Adicionar Novo Produto</h3>
@@ -115,6 +116,7 @@
         </div>
     </div>
 
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

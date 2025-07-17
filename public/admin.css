@@ -1,41 +1,44 @@
-/* admin.css */
+/* admin.css - Refatorado para Carrossel */
 
+/* Estilos Globais e de Layout */
 body {
-    font-family: sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #f4f4f4;
+    background-color: #f4f6f8;
     color: #333;
     line-height: 1.6;
 }
 
-.login-container,
 .admin-container {
-    max-width: 800px;
+    max-width: 95%;
     margin: 40px auto;
     padding: 20px;
     background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
 }
 
 h2 {
     text-align: center;
     color: #333;
     margin-bottom: 20px;
+    font-weight: 600;
 }
 
 h3 {
-    margin-top: 30px;
-    margin-bottom: 15px;
+    margin-top: 40px;
+    margin-bottom: 20px;
     color: #555;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
+    border-bottom: 2px solid #eef0f2;
+    padding-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-weight: 500;
 }
 
+/* Estilos de Formulários Gerais */
 .form-group {
     margin-bottom: 15px;
 }
@@ -43,7 +46,8 @@ h3 {
 .form-group label {
     display: block;
     margin-bottom: 5px;
-    font-weight: bold;
+    font-weight: 500;
+    font-size: 0.9em;
 }
 
 .form-group input[type="text"],
@@ -51,388 +55,194 @@ h3 {
 .form-group input[type="number"],
 .form-group input[type="file"],
 .form-group select {
-    width: calc(100% - 22px); /* Ajusta para padding */
+    width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box; /* Inclui padding e borda no cálculo da largura */
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1em;
 }
 
-.form-group input[type="checkbox"] {
-    margin-right: 5px;
-    vertical-align: middle; /* Alinha o checkbox verticalmente */
+.form-group-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
 }
 
+.form-group-inline label {
+    margin-bottom: 0;
+}
 
+/* Botões */
 button {
-    display: inline-block; /* Altera para inline-block para botões na mesma linha */
-    background: #5cb85c;
-    color: white;
-    padding: 10px 15px;
+    font-family: inherit;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
+    padding: 10px 15px;
     font-size: 1rem;
-    margin-right: 10px; /* Adiciona margem à direita */
-    margin-bottom: 10px; /* Adiciona margem inferior */
-    transition: background-color 0.3s ease;
-    vertical-align: middle; /* Alinha botões verticalmente */
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
 button:hover {
-    background: #4cae4c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* Estilo específico para o botão de sair */
 #logoutBtn {
-    background-color: #d9534f;
-    float: right; /* Alinha à direita */
-    margin-top: -40px; /* Ajusta posição */
+    background-color: #e74c3c;
+    color: white;
+    float: right;
+    margin-top: -40px;
+}
+#logoutBtn:hover { background-color: #c0392b; }
+
+.save-btn { background-color: #2980b9; color: white; }
+.save-btn:hover { background-color: #3498db; }
+
+.delete-btn { background-color: #95a5a6; color: white; }
+.delete-btn:hover { background-color: #7f8c8d; }
+
+.order-btn { font-size: 0.8rem; padding: 5px 10px; background-color: #6c757d; color: white; }
+.order-btn:hover { background-color: #5a6268; }
+
+/* Seção de Produtos com Carrossel */
+.products-section {
+    margin-top: 30px;
 }
 
-#logoutBtn:hover {
-    background-color: #c9302c;
+.category-carousel-container {
+    margin-bottom: 40px;
 }
 
-
-.error-message {
-    color: red;
-    text-align: center;
-    margin-top: 10px;
-    display: none; /* Esconde por padrão */
+.category-carousel-title {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 15px;
+    padding-left: 5px;
 }
 
-/* Estilo para mensagens de informação */
-.info-message {
-    font-size: 0.9em;
-    color: #555;
-    margin-top: 5px;
-    margin-bottom: 10px;
-}
-
-table {
+.admin-swiper.swiper-container {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    padding: 10px 5px; /* Espaço para sombra */
 }
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-    vertical-align: top; /* Alinha o conteúdo no topo */
-}
-
-th {
-    background-color: #f2f2f2;
-}
-
-td input[type="text"],
-td input[type="number"] {
-    width: calc(100% - 10px); /* Ajusta largura dos inputs na tabela */
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-}
-
-/* Estilo para inputs com erro */
-input.input-error {
-    border-color: red !important; /* Usa !important para garantir que sobrescreva outros estilos */
-}
-
-.error-message-field {
-    color: red;
-    font-size: 0.8em;
-    margin-top: 2px;
-    margin-bottom: 5px;
-    display: none; /* Esconde por padrão */
-}
-
-
-td .image-cell {
-    display: flex; /* Usa flexbox para alinhar imagem e campos */
-    align-items: center;
-    flex-wrap: wrap; /* Permite quebra de linha em telas menores */
-}
-
-td .image-cell input[type="text"] {
-    flex-grow: 1; /* Permite que o input de URL cresça */
-    margin-right: 10px;
-    min-width: 150px; /* Largura mínima para o campo URL */
-}
-
-td .image-cell input[type="file"] {
-     width: auto; /* Largura automática para o input de arquivo */
-     margin-right: 10px;
-     flex-basis: 100%; /* Ocupa a largura total em uma nova linha */
-     margin-bottom: 5px;
-}
-
-td .image-cell button {
-    flex-shrink: 0; /* Evita que o botão encolha */
-    margin-right: 10px;
-}
-
-
-td .image-cell img {
-    max-width: 50px;
+.admin-swiper .swiper-slide {
+    width: 300px; /* Largura fixa para cada card */
     height: auto;
-    border-radius: 4px;
-    margin-left: 10px;
-    flex-shrink: 0; /* Evita que a imagem encolha */
 }
 
-
-.save-btn {
-    background-color: #0275d8;
+.admin-product-card {
+    background: #f9fafb;
+    border: 1px solid #eef0f2;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.save-btn:hover {
-    background-color: #025aa5;
+.admin-product-image-container {
+    position: relative;
+    height: 160px;
 }
 
-.delete-btn {
-    background-color: #d9534f;
+.admin-product-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.delete-btn:hover {
-    background-color: #c9302c;
+.admin-product-image-container .upload-single-image-btn {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    padding: 6px 12px;
+    font-size: 0.85em;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
+.admin-product-card:hover .upload-single-image-btn {
+    opacity: 1;
+}
 
-/* Estilo para o formulário de adicionar novo produto */
+.admin-product-details {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-product-details .form-group {
+    margin-bottom: 12px;
+}
+.admin-product-details .form-group label {
+    font-size: 0.85em;
+    color: #555;
+}
+.admin-product-details .form-group input {
+    padding: 8px;
+    font-size: 0.95em;
+}
+
+.admin-product-actions {
+    margin-top: auto; /* Empurra para o final */
+    padding-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.admin-product-actions button {
+    flex-grow: 1;
+    width: 50%;
+}
+
+/* Setas de Navegação do Swiper */
+.admin-swiper .swiper-button-next,
+.admin-swiper .swiper-button-prev {
+    color: #2980b9;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.admin-swiper .swiper-button-next:after,
+.admin-swiper .swiper-button-prev:after {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Formulário de Adicionar Novo Produto */
 #addProductForm {
     margin-top: 30px;
-    padding-top: 20px;
+    padding: 20px;
     border-top: 1px solid #eee;
+    background-color: #fdfdfd;
+    border-radius: 8px;
 }
 
 #addProductForm button[type="submit"] {
-     display: block; /* Botão de adicionar ocupa a largura total */
-     width: 100%;
-     margin-right: 0; /* Remove margem à direita */
-     margin-bottom: 0; /* Remove margem inferior */
-}
-
-#uploadNewImageBtn {
-    background-color: #f0ad4e;
-}
-
-#uploadNewImageBtn:hover {
-    background-color: #ec971f;
-}
-
-/* Estilos para a seção de configurações */
-.config-section {
-    margin-bottom: 40px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
-}
-
-.config-section .form-group input[type="text"],
-.config-section .form-group input[type="number"],
-.config-section .form-group input[type="file"] {
-     width: calc(100% - 22px); /* Ajusta largura */
-}
-
-.config-section .form-group {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 10px; /* Espaçamento menor */
-}
-
-.config-section .form-group label {
-    flex-basis: 180px; /* Largura fixa para labels */
-    margin-bottom: 0;
-    margin-right: 10px;
-}
-
-.config-section .form-group input[type="text"],
-.config-section .form-group input[type="number"] {
-    flex-grow: 1; /* Campos de texto crescem */
-    margin-right: 10px;
-}
-
-.config-section .form-group input[type="file"] {
-     flex-grow: 1;
-     margin-right: 10px;
-     flex-basis: auto; /* Largura automática */
-}
-
-.config-section .form-group button {
-    flex-shrink: 0; /* Botões não encolhem */
-    margin-right: 10px;
-}
-
-.config-section .form-group .error-message-field {
-    flex-basis: 100%; /* Mensagem de erro ocupa a largura total */
-    margin-left: 190px; /* Alinha com os campos */
-    margin-top: 0;
-    margin-bottom: 5px;
-}
-
-.config-section button[type="submit"] {
      display: block;
      width: 100%;
-     margin-top: 20px;
+     background-color: #27ae60;
+}
+#addProductForm button[type="submit"]:hover {
+    background-color: #2ecc71;
 }
 
-
-/* Ajustes para responsividade básica */
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
-
-    .login-container,
-    .admin-container {
-        margin: 20px auto;
-        padding: 15px;
-    }
-
-    h2 {
-        font-size: 1.5em;
-    }
-
-    h3 {
-        font-size: 1.2em;
-    }
-
-    th, td {
-        padding: 8px;
-        display: block; /* Empilha células em telas pequenas */
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    th {
-        display: none; /* Oculta cabeçalhos em telas pequenas */
-    }
-
-    td::before {
-        content: attr(data-label); /* Exibe o cabeçalho como um label */
-        font-weight: bold;
-        margin-right: 10px;
-    }
-
-
-    td input[type="text"],
-    td input[type="number"],
-    td .image-cell input[type="text"],
-    td .image-cell input[type="file"] {
-         width: calc(100% - 16px); /* Ajusta largura em telas menores */
-         margin-right: 5px;
-    }
-
-     td .image-cell {
-        flex-direction: column; /* Empilha elementos na célula de imagem em telas menores */
-        align-items: flex-start;
-     }
-
-     td .image-cell input[type="text"],
-     td .image-cell input[type="file"],
-     td .image-cell button {
-          width: 100%; /* Ocupa largura total */
-          margin-right: 0;
-          margin-bottom: 5px;
-     }
-
-     td .image-cell img {
-         margin-left: 0;
-         margin-top: 5px;
-     }
-
-
-     button {
-         width: calc(100% - 20px); /* Botões ocupam largura total */
-         margin-right: 0;
-         margin-bottom: 10px;
-     }
-
-      #logoutBtn {
-          float: none; /* Remove float */
-          margin-top: 10px; /* Adiciona margem */
-          width: 100%;
-      }
-
-      /* Ajustes para a seção de configurações em telas pequenas */
-      .config-section .form-group {
-          flex-direction: column; /* Empilha elementos */
-          align-items: flex-start;
-      }
-
-      .config-section .form-group label {
-          flex-basis: auto; /* Remove largura fixa */
-          margin-right: 0;
-          margin-bottom: 5px;
-      }
-
-       .config-section .form-group input[type="text"],
-       .config-section .form-group input[type="number"],
-       .config-section .form-group input[type="file"] {
-            width: 100%; /* Ocupa largura total */
-            margin-right: 0;
-       }
-
-       .config-section .form-group button {
-           width: 100%;
-           margin-right: 0;
-       }
-
-       .config-section .form-group .error-message-field {
-           margin-left: 0; /* Remove margem */
-       }
-}
-
-/* Estilos para o Accordion de Produtos */
-.category-accordion {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    overflow: hidden; /* Garante que o border-radius funcione */
-}
-
-.category-header {
-    background-color: #f7f7f7;
-    padding: 15px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: bold;
-    color: #333;
-    transition: background-color 0.3s ease;
-}
-
-.category-header:hover {
-    background-color: #e9e9e9;
-}
-
-.category-header.active {
-    background-color: #e0e0e0;
-}
-
-.category-header .product-count {
-    font-weight: normal;
-    font-size: 0.9em;
-    color: #777;
-}
-
-.category-body {
-    padding: 0 15px 15px 15px;
-    display: none; /* Começa fechado */
-    border-top: 1px solid #ddd;
-    background-color: #fff;
-}
-
-.category-body table {
-    margin-top: 10px;
-    margin-bottom: 0;
-}
-
-/* Estilos para o Modal de Ordenação */
+/* Estilos para o Modal de Ordenação (mantidos) */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -455,53 +265,39 @@ td .image-cell img {
     max-width: 500px;
 }
 
-.modal-content h4 {
-    margin-top: 0;
-    margin-bottom: 10px;
-}
+.modal-content h4 { margin-top: 0; margin-bottom: 10px; }
+.modal-content p { margin-top: 0; margin-bottom: 20px; font-size: 0.9em; color: #666; }
 
-.modal-content p {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 0.9em;
-    color: #666;
-}
+.sortable-list { list-style: none; padding: 0; margin: 0; border: 1px solid #ddd; border-radius: 4px; }
+.sortable-list li { padding: 12px; background-color: #f9f9f9; border-bottom: 1px solid #ddd; cursor: grab; }
+.sortable-list li:last-child { border-bottom: none; }
+.sortable-list li.sortable-ghost { background-color: #cce5ff; opacity: 0.7; }
 
-.sortable-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
+.modal-actions { margin-top: 20px; text-align: right; }
 
-.sortable-list li {
-    padding: 12px;
-    background-color: #f9f9f9;
-    border-bottom: 1px solid #ddd;
-    cursor: grab;
-}
+/* Outros Estilos (mantidos) */
+.config-section { margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+.config-section .form-group { display: flex; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.config-section .form-group label { flex-basis: 180px; margin-bottom: 0; margin-right: 10px; }
+.config-section .form-group input[type="text"], .config-section .form-group input[type="number"] { flex-grow: 1; margin-right: 10px; }
+.config-section .form-group input[type="file"] { flex-grow: 1; margin-right: 10px; flex-basis: auto; }
+.config-section .form-group button { flex-shrink: 0; margin-right: 10px; }
+.config-section button[type="submit"] { display: block; width: 100%; margin-top: 20px; }
 
-.sortable-list li:last-child {
-    border-bottom: none;
-}
+input.input-error { border-color: #e74c3c !important; }
+.error-message-field { color: #e74c3c; font-size: 0.8em; margin-top: 2px; display: none; }
+.info-message { font-size: 0.9em; color: #555; margin-top: 5px; margin-bottom: 10px; }
 
-.sortable-list li.sortable-ghost {
-    background-color: #cce5ff;
-    opacity: 0.7;
-}
-
-.modal-actions {
-    margin-top: 20px;
-    text-align: right;
-}
-
-.order-btn {
-    font-size: 0.8rem;
-    padding: 5px 10px;
-    background-color: #6c757d;
-}
-
-.order-btn:hover {
-    background-color: #5a6268;
+/* Responsividade */
+@media (max-width: 768px) {
+    .admin-container {
+        max-width: 100%;
+        padding: 15px;
+    }
+    .admin-swiper .swiper-slide {
+        width: 250px; /* Cards menores em telas menores */
+    }
+    .config-section .form-group { flex-direction: column; align-items: flex-start; }
+    .config-section .form-group label { flex-basis: auto; margin-bottom: 5px; }
+    .config-section .form-group input { width: 100%; }
 }

@@ -119,47 +119,73 @@ function renderProductList() {
         const categoryProducts = productsByCategory[category];
         if (!categoryProducts) return;
 
-        const categoryId = `category-${category.replace(/\s+/g, '-')}`;
+        const categoryId = `category-carousel-${category.replace(/\s+/g, '-')}`;
         const categoryElement = document.createElement('div');
-        categoryElement.className = 'category-accordion';
-        categoryElement.innerHTML = `
-            <div class="category-header" data-target="#${categoryId}">
-                <span>${category}</span>
-                <span class="product-count">(${categoryProducts.length} produtos)</span>
-            </div>
-            <div class="category-body" id="${categoryId}">
-                <table>
-                    <thead>
-                        <tr><th>ID</th><th>Nome</th><th>Preço</th><th>Imagem</th><th>Ativo</th><th>Ações</th></tr>
-                    </thead>
-                    <tbody>
-                        ${categoryProducts.map(product => `
-                            <tr data-id="${product.id}">
-                                <td data-label="ID">${product.id}</td>
-                                <td data-label="Nome"><input type="text" value="${product.nome || ''}" data-field="nome"></td>
-                                <td data-label="Preço"><input type="number" step="0.01" value="${product.preco || 0}" data-field="preco"></td>
-                                <td data-label="Imagem" class="image-cell">
-                                    <input type="text" value="${product.imagem_url || ''}" data-field="imagem_url" placeholder="URL da imagem">
-                                    <input type="file" accept="image/*" class="upload-single-image-file" style="display:none;">
-                                    <button type="button" class="upload-single-image-btn">Upload</button>
-                                    <img src="${product.imagem_url || 'https://placehold.co/50x50'}" alt="${product.nome || ''}" width="50">
-                                </td>
-                                <td data-label="Ativo"><input type="checkbox" ${product.ativo ? 'checked' : ''} data-field="ativo"></td>
-                                <td data-label="Ações">
-                                    <button class="save-btn">Salvar</button>
-                                    <button class="move-btn">Mover</button>
-                                    <button class="delete-btn">Excluir</button>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
+        categoryElement.className = 'category-carousel-container';
+        
+        const title = document.createElement('h4');
+        title.className = 'category-carousel-title';
+        title.textContent = `${category} (${categoryProducts.length} produtos)`;
+        categoryElement.appendChild(title);
+
+        const swiperContainer = document.createElement('div');
+        swiperContainer.id = categoryId;
+        swiperContainer.className = 'swiper-container admin-swiper';
+        swiperContainer.innerHTML = `
+            <div class="swiper-wrapper"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
         `;
+        categoryElement.appendChild(swiperContainer);
+        
+        const swiperWrapper = swiperContainer.querySelector('.swiper-wrapper');
+
+        categoryProducts.forEach(product => {
+            const slide = document.createElement('div');
+            slide.className = 'swiper-slide';
+            slide.innerHTML = `
+                <div class="admin-product-card" data-id="${product.id}">
+                    <div class="admin-product-image-container">
+                        <img src="${product.imagem_url || 'https://placehold.co/150x140'}" alt="${product.nome || ''}">
+                        <input type="file" accept="image/*" class="upload-single-image-file" style="display:none;">
+                        <button type="button" class="upload-single-image-btn">Trocar Imagem</button>
+                    </div>
+                    <div class="admin-product-details">
+                        <div class="form-group">
+                            <label>Nome:</label>
+                            <input type="text" value="${product.nome || ''}" data-field="nome">
+                        </div>
+                        <div class="form-group">
+                            <label>Preço (R$):</label>
+                            <input type="number" step="0.01" value="${product.preco || 0}" data-field="preco">
+                        </div>
+                        <div class="form-group-inline">
+                            <label>Ativo:</label>
+                            <input type="checkbox" ${product.ativo ? 'checked' : ''} data-field="ativo">
+                        </div>
+                        <div class="admin-product-actions">
+                            <button class="save-btn">Salvar</button>
+                            <button class="delete-btn">Excluir</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            swiperWrapper.appendChild(slide);
+        });
+
         productListContainer.appendChild(categoryElement);
+
+        new Swiper(`#${categoryId}`, {
+            slidesPerView: 'auto',
+            spaceBetween: 16,
+            grabCursor: true,
+            navigation: {
+                nextEl: `#${categoryId} .swiper-button-next`,
+                prevEl: `#${categoryId} .swiper-button-prev`,
+            },
+        });
     });
 
-    // Popula o datalist de sugestões de categoria
     const categorySuggestions = document.getElementById('category-suggestions');
     categorySuggestions.innerHTML = '';
     allCategories.forEach(cat => {
@@ -168,25 +194,15 @@ function renderProductList() {
         categorySuggestions.appendChild(option);
     });
 
-    addAccordionListeners();
     addDynamicButtonListeners();
 }
 
 function addAccordionListeners() {
-    document.querySelectorAll('.category-header').forEach(header => {
-        header.addEventListener('click', () => {
-            const targetBody = document.querySelector(header.dataset.target);
-            if (targetBody) {
-                header.classList.toggle('active');
-                targetBody.style.display = targetBody.style.display === 'block' ? 'none' : 'block';
-            }
-        });
-    });
+    // Removido
 }
 
 function addDynamicButtonListeners() {
     document.querySelectorAll('.save-btn').forEach(btn => btn.addEventListener('click', saveProduct));
-    document.querySelectorAll('.move-btn').forEach(btn => btn.addEventListener('click', moveProduct));
     document.querySelectorAll('.upload-single-image-btn').forEach(btn => btn.addEventListener('click', handleSingleImageUpload));
     document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', deleteProduct));
 }
@@ -235,50 +251,15 @@ saveOrderBtn.addEventListener('click', saveCategoryOrder);
 
 // --- Funções de Ações de Produto ---
 
-async function moveProduct(event) {
-    const row = event.target.closest('tr');
-    const productId = row.dataset.id;
-    const productName = row.querySelector('input[data-field="nome"]').value;
-    const currentCategory = row.closest('.category-accordion').querySelector('.category-header span:first-child').textContent;
-
-    const availableCategories = categoryOrder.filter(c => c !== currentCategory);
-    if (availableCategories.length === 0) {
-        alert("Não há outras categorias para mover o produto.");
-        return;
-    }
-
-    const newCategory = prompt(`Para qual categoria você deseja mover "${productName}"?\n\nCategorias disponíveis:\n- ${availableCategories.join('\n- ')}`);
-
-    if (newCategory && categoryOrder.includes(newCategory)) {
-        try {
-            const response = await fetch(`/produtos/${productId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ categoria: newCategory }) // Envia apenas a categoria para atualizar
-            });
-
-            if (!response.ok) throw new Error(await response.text());
-
-            alert(`Produto "${productName}" movido para a categoria "${newCategory}" com sucesso!`);
-            loadProductsAndConfig(); // Recarrega tudo para refletir a mudança
-        } catch (error) {
-            console.error('Erro ao mover produto:', error);
-            alert('Erro ao mover o produto.');
-        }
-    } else if (newCategory) {
-        alert(`Categoria "${newCategory}" inválida. Por favor, escolha uma da lista.`);
-    }
-}
-
 async function saveProduct(event) {
-    const row = event.target.closest('tr');
-    if (!row) return; // Adiciona uma verificação de segurança
+    const card = event.target.closest('.admin-product-card');
+    if (!card) return;
 
-    const productId = row.dataset.id;
-    const nameInput = row.querySelector('input[data-field="nome"]');
-    const priceInput = row.querySelector('input[data-field="preco"]');
-    const imageUrlInput = row.querySelector('input[data-field="imagem_url"]');
-    const activeInput = row.querySelector('input[data-field="ativo"]');
+    const productId = card.dataset.id;
+    const nameInput = card.querySelector('input[data-field="nome"]');
+    const priceInput = card.querySelector('input[data-field="preco"]');
+    const imageUrl = card.querySelector('img').src;
+    const activeInput = card.querySelector('input[data-field="ativo"]');
 
     const isNameValid = validateField(nameInput, null, nameInput.value.trim() !== '', 'Nome é obrigatório.');
     const isPriceValid = validatePrice(priceInput, null);
@@ -288,11 +269,10 @@ async function saveProduct(event) {
         return;
     }
 
-    // Envia apenas os campos que foram editados nesta linha
     const updatedProductData = {
         nome: nameInput.value.trim(),
         preco: parseFloat(priceInput.value),
-        imagem_url: imageUrlInput.value.trim(),
+        imagem_url: imageUrl,
         ativo: activeInput.checked
     };
 
@@ -304,8 +284,6 @@ async function saveProduct(event) {
         });
         if (saveResponse.ok) {
             alert('Produto salvo com sucesso!');
-            const imgElement = row.querySelector('.image-cell img');
-            if (imgElement) imgElement.src = updatedProductData.imagem_url || 'https://placehold.co/50x50';
         } else {
              throw new Error(await saveResponse.text());
         }
@@ -316,9 +294,9 @@ async function saveProduct(event) {
 }
 
 async function deleteProduct(event) {
-    const row = event.target.closest('tr');
-    const productId = row.dataset.id;
-    const productName = row.querySelector('input[data-field="nome"]').value;
+    const card = event.target.closest('.admin-product-card');
+    const productId = card.dataset.id;
+    const productName = card.querySelector('input[data-field="nome"]').value;
 
     if (!confirm(`Tem certeza que deseja excluir o produto "${productName}"?`)) return;
 
@@ -326,7 +304,7 @@ async function deleteProduct(event) {
         const deleteResponse = await fetch(`/produtos/${productId}`, { method: 'DELETE' });
         if (deleteResponse.ok) {
             alert('Produto excluído com sucesso!');
-            row.remove();
+            loadProductsAndConfig();
         } else {
              throw new Error(await deleteResponse.text());
         }
@@ -337,34 +315,32 @@ async function deleteProduct(event) {
 }
 
 async function handleSingleImageUpload(event) {
-    const row = event.target.closest('tr');
-    const fileInput = row.querySelector('input[type="file"].upload-single-image-file');
-    const imageUrlInput = row.querySelector('input[data-field="imagem_url"]');
-    const imgElement = row.querySelector('.image-cell img');
+    const card = event.target.closest('.admin-product-card');
+    const fileInput = card.querySelector('input[type="file"].upload-single-image-file');
+    const imgElement = card.querySelector('img');
 
-    // Simula um clique no input de arquivo que está escondido
     fileInput.click();
 
     fileInput.onchange = async () => {
-        if (fileInput.files.length === 0) return; // Sai se nenhum arquivo for selecionado
+        if (fileInput.files.length === 0) return;
 
         const file = fileInput.files[0];
         const formData = new FormData();
         formData.append('image', file);
 
+        const originalButtonText = event.target.textContent;
+        event.target.textContent = 'Enviando...';
+        event.target.disabled = true;
+
         try {
             const response = await fetch('/upload-imagem', { method: 'POST', body: formData });
             if (response.ok) {
                 const result = await response.json();
-                imageUrlInput.value = result.link;
-                if (imgElement) imgElement.src = result.link;
+                imgElement.src = result.link;
                 
-                // Após o sucesso do upload, aciona o salvamento da linha inteira
-                const saveButton = row.querySelector('.save-btn');
+                const saveButton = card.querySelector('.save-btn');
                 if (saveButton) {
-                    saveButton.click(); // Dispara o evento de clique do botão "Salvar"
-                } else {
-                    alert('Upload bem-sucedido, mas o botão de salvar não foi encontrado para finalizar.');
+                    saveButton.click();
                 }
             } else {
                  throw new Error(await response.text());
@@ -373,7 +349,9 @@ async function handleSingleImageUpload(event) {
             console.error('Erro no upload da imagem:', error);
             alert('Erro no upload da imagem.');
         } finally {
-            fileInput.value = ''; // Limpa o input de arquivo para futuras seleções
+            event.target.textContent = originalButtonText;
+            event.target.disabled = false;
+            fileInput.value = '';
         }
     };
 }
