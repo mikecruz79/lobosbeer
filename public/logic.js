@@ -126,11 +126,7 @@ function showInfo(searchTerm = '') {
 // --- Funções de Interação com o Usuário ---
 
 function setupButtonListeners() {
-    if (startOrderBtn) {
-        startOrderBtn.addEventListener('click', () => {
-            catalogoContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    }
+    // O botão startOrderBtn foi removido.
     if (backToTopBtn) {
         backToTopBtn.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -139,7 +135,7 @@ function setupButtonListeners() {
 }
 
 function setupScrollListeners() {
-    // Lógica para o botão de voltar ao topo (mantida)
+    // Lógica para o botão de voltar ao topo
     window.addEventListener('scroll', () => {
         if (backToTopBtn) {
             if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
@@ -151,16 +147,17 @@ function setupScrollListeners() {
     });
 
     // Lógica da barra de navegação com Intersection Observer
-    if (startOrderBtn && stickyNav) {
+    // A barra aparece quando a caixa de info da loja SOME da tela
+    if (storeInfoContainer && stickyNav) {
         const observerOptions = {
             root: null, // viewport
             rootMargin: '0px',
-            threshold: 0.1 // Gatilho quando 10% do elemento está visível/invisível
+            threshold: 0 // Gatilho assim que o elemento sai ou entra na tela
         };
 
-        const startBtnObserver = new IntersectionObserver((entries) => {
+        const infoBoxObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                // Se o botão NÃO está visível na tela, mostra a nav
+                // Se a caixa de info NÃO está mais visível, mostra a nav
                 if (!entry.isIntersecting) {
                     stickyNav.classList.add('visible');
                 } else {
@@ -169,7 +166,7 @@ function setupScrollListeners() {
             });
         }, observerOptions);
 
-        startBtnObserver.observe(startOrderBtn);
+        infoBoxObserver.observe(storeInfoContainer);
     }
     
     // Observador para o formulário, para esconder a nav quando ele aparecer
