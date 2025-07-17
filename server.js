@@ -169,38 +169,55 @@ app.post('/produtos', async (req, res) => {
     }
 });
 
-// Rota PUT para atualizar um produto existente (Refatorada para maior clareza e robustez)
+// Rota PUT para atualizar um produto existente (CORRIGIDA E ROBUSTA)
 app.put('/produtos/:id', async (req, res) => {
     const { id } = req.params;
     const { nome, preco, imagem_url, ativo, categoria } = req.body;
 
-    const fieldsToUpdate = {};
-    if (nome !== undefined) fieldsToUpdate.nome = nome;
-    if (preco !== undefined) fieldsToUpdate.preco = parseFloat(preco);
-    if (imagem_url !== undefined) fieldsToUpdate.imagem_url = imagem_url;
-    if (ativo !== undefined) fieldsToUpdate.ativo = Boolean(ativo);
-    if (categoria !== undefined) fieldsToUpdate.categoria = standardizeCategory(categoria);
-
-    const fieldNames = Object.keys(fieldsToUpdate);
-    if (fieldNames.length === 0) {
-        return res.status(400).json({ error: 'Nenhum campo para atualizar fornecido.' });
-    }
-
-    const setClauses = fieldNames.map((fieldName, index) => `${fieldName} = ${index + 1}`);
-    const fieldValues = Object.values(fieldsToUpdate);
-    fieldValues.push(id);
-
-    const query = `UPDATE products SET ${setClauses.join(', ')} WHERE id = ${fieldValues.length} RETURNING *`;
-
     try {
-        const result = await pool.query(query, fieldValues);
-        if (result.rows.length === 0) {
+        // Primeiro, busca o produto atual para garantir que ele existe
+        const existingProductResult = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
+        if (existingProductResult.rows.length === 0) {
             return res.status(404).json({ error: 'Produto não encontrado.' });
         }
+        const existingProduct = existingProductResult.rows[0];
+
+        // Constrói o objeto de atualização apenas com os campos fornecidos na requisição
+        const updateData = {
+            nome: nome !== undefined ? nome : existingProduct.nome,
+            preco: preco !== undefined ? parseFloat(preco) : existingProduct.preco,
+            imagem_url: imagem_url !== undefined ? imagem_url : existingProduct.imagem_url,
+            ativo: ativo !== undefined ? Boolean(ativo) : existingProduct.ativo,
+            categoria: categoria !== undefined ? standardizeCategory(categoria) : existingProduct.categoria,
+        };
+
+        // Validação para garantir que o preço é um número válido
+        if (isNaN(updateData.preco)) {
+            return res.status(400).json({ error: 'O preço fornecido é inválido.' });
+        }
+
+        const query = `
+            UPDATE products 
+            SET nome = $1, preco = $2, imagem_url = $3, ativo = $4, categoria = $5 
+            WHERE id = $6 
+            RETURNING *`;
+        
+        const values = [
+            updateData.nome,
+            updateData.preco,
+            updateData.imagem_url,
+            updateData.ativo,
+            updateData.categoria,
+            id
+        ];
+
+        const result = await pool.query(query, values);
         res.status(200).json({ message: 'Produto atualizado com sucesso!', product: result.rows[0] });
+
     } catch (error) {
-        console.error('Erro ao atualizar produto:', error);
-        res.status(500).json({ error: 'Erro ao atualizar produto.' });
+        // Log detalhado do erro no servidor para facilitar a depuração
+        console.error(`Erro detalhado ao atualizar produto ID ${id}:`, error);
+        res.status(500).json({ error: 'Erro interno ao atualizar o produto.' });
     }
 });
 
