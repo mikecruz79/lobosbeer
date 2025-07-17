@@ -96,7 +96,7 @@ function showInfo(searchTerm = '') {
         const secao = document.createElement('div');
         secao.className = 'category-section';
         const swiperContainerId = `swiper-container-${categoria.replace(/\s+/g, '-')}`;
-        secao.innerHTML = `<h2 class="category-title" id="${categoryId}">${categoria}</h2><div id="${swiperContainerId}" class="swiper-container"><div class="swiper-wrapper"></div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div></div>`;
+        secao.innerHTML = `<h2 class="category-title" id="${categoryId}">${categoria}</h2><div id="${swiperContainerId}" class="swiper-container"><div class="swiper-wrapper"></div><div class="swiper-pagination"></div></div>`;
         catalogoContainer.appendChild(secao);
 
         const swiperWrapper = secao.querySelector('.swiper-wrapper');
@@ -110,8 +110,14 @@ function showInfo(searchTerm = '') {
         });
 
         new Swiper(`#${swiperContainerId}`, {
-            effect: 'slide', slidesPerView: 'auto', spaceBetween: 16, grabCursor: true,
-            navigation: { nextEl: `#${swiperContainerId} .swiper-button-next`, prevEl: `#${swiperContainerId} .swiper-button-prev` },
+            effect: 'slide', 
+            slidesPerView: 'auto', 
+            spaceBetween: 16, 
+            grabCursor: true,
+            pagination: {
+                el: `#${swiperContainerId} .swiper-pagination`,
+                clickable: true,
+            },
             breakpoints: { 600: { slidesPerView: 3, spaceBetween: 20 }, 768: { slidesPerView: 4, spaceBetween: 24 } }
         });
     });

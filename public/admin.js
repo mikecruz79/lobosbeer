@@ -133,8 +133,7 @@ function renderProductList() {
         swiperContainer.className = 'swiper-container admin-swiper';
         swiperContainer.innerHTML = `
             <div class="swiper-wrapper"></div>
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
         `;
         categoryElement.appendChild(swiperContainer);
         
@@ -179,9 +178,9 @@ function renderProductList() {
             slidesPerView: 'auto',
             spaceBetween: 16,
             grabCursor: true,
-            navigation: {
-                nextEl: `#${categoryId} .swiper-button-next`,
-                prevEl: `#${categoryId} .swiper-button-prev`,
+            pagination: {
+                el: `#${categoryId} .swiper-pagination`,
+                clickable: true,
             },
         });
     });
