@@ -71,6 +71,39 @@
     <img class="image-modal-content" id="modalImage">
   </div>
 
+  <!-- Modal para Revisão do Pedido -->
+  <div id="reviewOrderModal" class="review-modal-overlay">
+    <div class="review-modal-content">
+        <span class="close-review-modal">&times;</span>
+        <h2><i class="fas fa-clipboard-check"></i> Revise seu Pedido</h2>
+        
+        <div id="review-items-section">
+            <h4>Itens do Pedido</h4>
+            <ul id="review-items-list"></ul>
+            <p id="review-total-price"></p>
+        </div>
+
+        <div id="review-details-section">
+            <h4>Seus Dados</h4>
+            <p id="review-customer-details"></p>
+        </div>
+
+        <div id="review-payment-section">
+            <h4>Pagamento</h4>
+            <p id="review-payment-details"></p>
+        </div>
+
+        <p class="review-disclaimer">
+            <strong>Atenção:</strong> Este é apenas um rascunho do seu pedido. O pagamento e a confirmação final serão combinados diretamente pelo WhatsApp.
+        </p>
+
+        <div class="review-modal-actions">
+            <button id="confirmOrderBtn" class="btn-confirm"><i class="fab fa-whatsapp"></i> Confirmar e Enviar</button>
+            <button id="editOrderBtn" class="btn-edit">Corrigir Informações</button>
+        </div>
+    </div>
+  </div>
+
   <!-- Load scripts with defer to prevent render-blocking -->
   <script src="https://unpkg.com/swiper/swiper-bundle.min.js" defer></script>
   <script src="logic.js" defer></script>

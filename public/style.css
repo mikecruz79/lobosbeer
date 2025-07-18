@@ -626,3 +626,116 @@ button {
     background-color: #2ecc71;
     transform: translateY(-2px);
 }
+
+/* 9. Modal de Revisão de Pedido
+-------------------------------------------------- */
+.review-modal-overlay {
+    display: none; /* Começa escondido */
+    position: fixed;
+    z-index: 1002; /* Acima do modal de imagem */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-sm);
+    animation: fadeIn 0.3s ease;
+}
+.review-modal-content {
+    background: var(--background-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-medium);
+    padding: var(--spacing-md);
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+.review-modal-content h2 {
+    font-size: 1.5em;
+    margin-top: 0;
+    margin-bottom: var(--spacing-md);
+    color: var(--text-color-dark);
+    text-align: left;
+}
+.review-modal-content h4 {
+    font-size: 1.1em;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: var(--spacing-xs);
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+}
+.close-review-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.8em;
+    color: var(--text-color-medium);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+.close-review-modal:hover {
+    transform: scale(1.2);
+}
+#review-items-list {
+    list-style: none;
+    padding-left: 0;
+}
+#review-items-list li {
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid var(--border-color);
+}
+#review-total-price {
+    font-weight: 600;
+    font-size: 1.2em;
+    text-align: right;
+    margin-top: var(--spacing-sm);
+}
+#review-customer-details, #review-payment-details {
+    line-height: 1.6;
+}
+.review-disclaimer {
+    font-size: 0.85em;
+    color: var(--text-color-medium);
+    background-color: var(--background-light);
+    padding: var(--spacing-sm);
+    border-radius: 8px;
+    margin-top: var(--spacing-md);
+    text-align: center;
+}
+.review-modal-actions {
+    margin-top: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+.review-modal-actions button {
+    padding: 1rem;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+.review-modal-actions .btn-confirm {
+    background-color: var(--secondary-color);
+    color: var(--text-color-light);
+    order: 1; /* Botão principal aparece primeiro */
+}
+.review-modal-actions .btn-edit {
+    background-color: var(--border-color);
+    color: var(--text-color-dark);
+    order: 2;
+}
+@media (min-width: 600px) {
+    .review-modal-actions {
+        flex-direction: row-reverse; /* Inverte a ordem no desktop */
+    }
+    .review-modal-actions button {
+        flex-grow: 1;
+    }
+}
+
