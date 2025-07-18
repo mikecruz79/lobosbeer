@@ -63,7 +63,22 @@ function updateStoreInfo() {
     document.title = configLoja.nomeloja || 'Cardápio Digital';
     document.getElementById('nome-loja').textContent = configLoja.nomeloja;
     document.querySelector('#endereco-loja span').textContent = configLoja.enderecoloja;
-    document.querySelector('#horario-funcionamento span').textContent = configLoja.horariofuncionamento;
+    
+    // Formata e exibe os novos horários
+    const horarioContainer = document.getElementById('horario-funcionamento');
+    const horarios = [
+        { label: 'Seg-Qui', value: configLoja.horario_padrao },
+        { label: 'Sex-Sáb', value: configLoja.horario_fds },
+        { label: 'Dom/Feriados', value: configLoja.horario_domingo }
+    ];
+    
+    const horariosHtml = horarios
+        .filter(h => h.value) // Filtra apenas os horários que têm valor
+        .map(h => `<strong>${h.label}:</strong> ${h.value}`)
+        .join(' | ');
+
+    horarioContainer.querySelector('span').innerHTML = horariosHtml;
+
     document.getElementById('logo-img').src = configLoja.logourl || 'https://placehold.co/100x100';
     document.getElementById('capa-img').src = configLoja.capaurl || 'https://placehold.co/800x250';
 }

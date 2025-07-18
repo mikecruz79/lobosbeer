@@ -438,7 +438,9 @@ function renderConfig(config) {
     if (config) {
         document.getElementById('nomeLoja').value = config.nomeloja || '';
         document.getElementById('enderecoLoja').value = config.enderecoloja || '';
-        document.getElementById('horarioFuncionamento').value = config.horariofuncionamento || '';
+        document.getElementById('horarioPadrao').value = config.horario_padrao || '';
+        document.getElementById('horarioFds').value = config.horario_fds || '';
+        document.getElementById('horarioDomingo').value = config.horario_domingo || '';
         
         let localWhatsapp = (config.whatsappnumber || '').replace(/\D/g, '');
         if (localWhatsapp.startsWith('55')) {
@@ -469,7 +471,9 @@ configForm.addEventListener('submit', async function(event) {
     const updatedConfig = {
         nomeloja: document.getElementById('nomeLoja').value.trim(),
         enderecoloja: document.getElementById('enderecoLoja').value.trim(),
-        horariofuncionamento: document.getElementById('horarioFuncionamento').value.trim(),
+        horario_padrao: document.getElementById('horarioPadrao').value.trim(),
+        horario_fds: document.getElementById('horarioFds').value.trim(),
+        horario_domingo: document.getElementById('horarioDomingo').value.trim(),
         whatsappnumber: whatsappInput.value.trim(),
         logourl: document.getElementById('logoUrl').value.trim(),
         capaurl: document.getElementById('capaUrl').value.trim()

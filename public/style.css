@@ -131,6 +131,10 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  line-height: 1.4; /* Adiciona um pouco de espaço entre as linhas se quebrar */
+}
+.store-details .header-info span {
+    display: inline-block; /* Permite que o span se comporte melhor com o conteúdo */
 }
 .store-details .header-info i {
   color: var(--primary-color);

@@ -99,6 +99,17 @@ async function migrateDatabase() {
             console.log('Migrando Tabela Configurations: Adicionando coluna "ordem_categorias".');
             await pool.query('ALTER TABLE configurations ADD COLUMN ordem_categorias TEXT');
         }
+
+        // Adiciona as novas colunas de horário
+        const newTimeColumns = ['horario_padrao', 'horario_fds', 'horario_domingo'];
+        for (const col of newTimeColumns) {
+            res = await pool.query(`SELECT column_name FROM information_schema.columns WHERE table_name='configurations' AND column_name='${col}'`);
+            if (res.rows.length === 0) {
+                console.log(`Migrando Tabela Configurations: Adicionando coluna "${col}".`);
+                await pool.query(`ALTER TABLE configurations ADD COLUMN ${col} TEXT`);
+            }
+        }
+
         console.log('Migração do banco de dados concluída.');
 
     } catch (err) {
@@ -269,18 +280,20 @@ app.post('/config', async (req, res) => {
         const finalConfig = {
             nomeloja: newConfigData.nomeloja || currentConfig.nomeloja,
             enderecoloja: newConfigData.enderecoloja || currentConfig.enderecoloja,
-            horariofuncionamento: newConfigData.horariofuncionamento || currentConfig.horariofuncionamento,
             whatsappnumber: whatsappNumberToSave,
             logourl: newConfigData.logourl !== undefined ? newConfigData.logourl : currentConfig.logourl,
             capaurl: newConfigData.capaurl !== undefined ? newConfigData.capaurl : currentConfig.capaurl,
-            ordem_categorias: ordemCategoriasToSave
+            ordem_categorias: ordemCategoriasToSave,
+            horario_padrao: newConfigData.horario_padrao !== undefined ? newConfigData.horario_padrao : currentConfig.horario_padrao,
+            horario_fds: newConfigData.horario_fds !== undefined ? newConfigData.horario_fds : currentConfig.horario_fds,
+            horario_domingo: newConfigData.horario_domingo !== undefined ? newConfigData.horario_domingo : currentConfig.horario_domingo,
         };
 
         await pool.query(`
             UPDATE configurations
-            SET nomeloja = $1, enderecoloja = $2, horariofuncionamento = $3, whatsappnumber = $4, logourl = $5, capaurl = $6, ordem_categorias = $7
+            SET nomeloja = $1, enderecoloja = $2, whatsappnumber = $3, logourl = $4, capaurl = $5, ordem_categorias = $6, horario_padrao = $7, horario_fds = $8, horario_domingo = $9
             WHERE id = 1;
-        `, [finalConfig.nomeloja, finalConfig.enderecoloja, finalConfig.horariofuncionamento, finalConfig.whatsappnumber, finalConfig.logourl, finalConfig.capaurl, finalConfig.ordem_categorias]);
+        `, [finalConfig.nomeloja, finalConfig.enderecoloja, finalConfig.whatsappnumber, finalConfig.logourl, finalConfig.capaurl, finalConfig.ordem_categorias, finalConfig.horario_padrao, finalConfig.horario_fds, finalConfig.horario_domingo]);
 
         res.status(200).json({ message: 'Configurações salvas com sucesso!' });
     } catch (error) {
