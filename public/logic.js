@@ -75,7 +75,7 @@ function updateStoreInfo() {
     const horariosHtml = horarios
         .filter(h => h.value) // Filtra apenas os horários que têm valor
         .map(h => `<strong>${h.label}:</strong> ${h.value}`)
-        .join(' | ');
+        .join('<br>');
 
     horarioContainer.querySelector('span').innerHTML = horariosHtml;
 

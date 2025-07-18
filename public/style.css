@@ -129,9 +129,9 @@ body {
   font-size: 0.95em;
   color: var(--text-color-medium);
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Alinha o ícone ao topo do bloco de texto */
   gap: 0.5rem;
-  line-height: 1.4; /* Adiciona um pouco de espaço entre as linhas se quebrar */
+  line-height: 1.5; /* Aumenta o espaço entre as linhas de horário */
 }
 .store-details .header-info span {
     display: inline-block; /* Permite que o span se comporte melhor com o conteúdo */
