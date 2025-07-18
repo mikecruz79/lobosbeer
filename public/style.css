@@ -128,16 +128,18 @@ body {
 .store-details .header-info {
   font-size: 0.95em;
   color: var(--text-color-medium);
-  display: flex;
-  align-items: flex-start; /* Alinha o ícone ao topo do bloco de texto */
-  gap: 0.5rem;
-  line-height: 1.5; /* Aumenta o espaço entre as linhas de horário */
+  position: relative; /* Necessário para o posicionamento absoluto do ícone */
+  padding-left: 22px; /* Espaço para o ícone que será posicionado */
+  line-height: 1.5; 
 }
 .store-details .header-info span {
-    display: inline-block; /* Permite que o span se comporte melhor com o conteúdo */
+    display: inline-block; 
 }
 .store-details .header-info i {
   color: var(--primary-color);
+  position: absolute;
+  left: 0;
+  top: 6px; /* Ajuste fino para alinhar com o topo da primeira linha */
 }
 
 /* 3. Conte��do Principal e Botões
